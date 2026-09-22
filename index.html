@@ -1121,8 +1121,20 @@
         <!-- TAB 2: SPEAKING CARDS & PDF UPLOADER -->
         <div id="admPanel-cards" class="hidden space-y-4">
           <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200">
-            <h4 class="font-bold text-amber-950 text-xs mb-1">Add More Speaking Cards via PDF or Custom Entry</h4>
-            <p class="text-[11px] text-amber-900">Upload a Cambridge speaking card PDF or sample paper to automatically parse text into a new card, or manually create Speaking Card K, L, M, etc.</p>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h4 class="font-bold text-amber-950 text-xs mb-0.5">Speaking Cards & Cloud Sync</h4>
+                <p class="text-[11px] text-amber-900">Upload Cambridge speaking card PDFs or manually add cards. Cards are saved to your Google Sheet so they are accessible from any PC.</p>
+              </div>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button onclick="fetchCardsFromGoogleSheet(true)" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs flex items-center gap-1 shadow-sm transition">
+                  <i class="ph-bold ph-cloud-arrow-down"></i> Fetch from Sheet
+                </button>
+                <button onclick="syncAllCardsToGoogleSheet()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-1 shadow-sm transition">
+                  <i class="ph-bold ph-cloud-arrow-up"></i> Push All to Sheet
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- PDF Upload Box -->
@@ -2650,12 +2662,22 @@ function doPost(e) {
         const res = await fetch(url, { method: 'GET' });
         const json = await res.json();
 
-        if (json && json.status === "success" && Array.isArray(json.candidates)) {
-          state.roster = json.candidates;
-          renderRosterTable();
-          if (notify) showToast(`Fetched ${json.candidates.length} candidate(s) from Google Sheet!`);
+        if (json && json.status === "success") {
+          if (Array.isArray(json.candidates)) {
+            state.roster = json.candidates;
+            renderRosterTable();
+          }
+          // Also merge cloud cards from Google Sheet
+          if (json.cards && typeof json.cards === "object") {
+            Object.keys(json.cards).forEach(k => {
+              CARDS[k] = json.cards[k];
+            });
+            renderCardsDropdown();
+            renderActiveCardsInAdmin();
+          }
+          if (notify) showToast(`Fetched data from Google Sheet!`);
         } else {
-          if (notify) showToast(json.message || "Could not retrieve candidates.");
+          if (notify) showToast(json.message || "Could not retrieve data.");
         }
       } catch (err) {
         console.warn("Fetch roster error:", err);
@@ -3030,7 +3052,88 @@ function doPost(e) {
       document.getElementById('newCardQuestions').value = '';
       window._parsedCardMetadata = null;
 
-      showToast(`Speaking Card ${key} created successfully and added to exam roster!`);
+      // Automatically sync new card to Google Sheet cloud
+      saveCardToGoogleSheet(key, CARDS[key]);
+      showToast(`Speaking Card ${key} created and syncing to Google Sheet!`);
+    }
+
+    async function saveCardToGoogleSheet(cardKey, cardData) {
+      const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
+      if (!url) return;
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            adminPassword: "Pakistan@1947",
+            action: "saveCard",
+            cardKey: cardKey,
+            card: cardData
+          })
+        });
+      } catch (e) {
+        console.warn("Cloud save card error:", e);
+      }
+    }
+
+    async function deleteCardFromGoogleSheet(cardKey) {
+      const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
+      if (!url) return;
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            adminPassword: "Pakistan@1947",
+            action: "deleteCard",
+            cardKey: cardKey
+          })
+        });
+      } catch (e) {
+        console.warn("Cloud delete card error:", e);
+      }
+    }
+
+    async function syncAllCardsToGoogleSheet() {
+      const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
+      if (!url) {
+        showToast("No Google Web App URL configured.");
+        return;
+      }
+      showToast("Syncing all speaking cards to Google Sheet...");
+      const keys = Object.keys(CARDS);
+      for (const k of keys) {
+        await saveCardToGoogleSheet(k, CARDS[k]);
+      }
+      showToast(`All ${keys.length} Speaking Cards synced to Google Sheet!`);
+    }
+
+    async function fetchCardsFromGoogleSheet(notify = false) {
+      const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
+      if (!url) {
+        if (notify) showToast("No Google Web App URL configured.");
+        return;
+      }
+      try {
+        const res = await fetch(url, { method: 'GET' });
+        const json = await res.json();
+        if (json && json.status === "success" && json.cards) {
+          const cloudCards = json.cards;
+          let addedCount = 0;
+          Object.keys(cloudCards).forEach(k => {
+            CARDS[k] = cloudCards[k];
+            addedCount++;
+          });
+          renderCardsDropdown();
+          renderActiveCardsInAdmin();
+          if (notify) showToast(`Loaded ${addedCount} card(s) from Google Sheet!`);
+        }
+      } catch (e) {
+        console.warn("Fetch cards error:", e);
+        if (notify) showToast("Could not fetch cards from Google Sheet.");
+      }
     }
 
     function renderActiveCardsInAdmin() {
@@ -3097,6 +3200,9 @@ function doPost(e) {
         }
       }
 
+      // Delete from Google Sheet cloud
+      deleteCardFromGoogleSheet(key);
+
       renderCardsDropdown();
       renderActiveCardsInAdmin();
       showToast(`Speaking Card ${key} (${cardTitle}) deleted.`);
@@ -3108,42 +3214,7 @@ function doPost(e) {
       if (sel) sel.value = key;
       onCardSelectionChange(key);
       closeAdminWorkspaceModal();
-      showToast(`Switched to Speaking Card ${key}: ${CARDS[key]?.title}`);
-    }
-
-    function copyAppsScriptCode() {
-      const codeArea = document.getElementById('appsScriptCodeArea');
-      codeArea.select();
-      document.execCommand('copy');
-      showToast("Code.gs copied to clipboard!");
-    }
-
-    async function testGoogleSheetConnection() {
-      const url = document.getElementById('googleWebAppUrl').value.trim();
-      if (!url) {
-        showToast("Please paste your Google Apps Script Web App URL first.");
-        return;
-      }
-      state.googleWebAppUrl = url;
-      localStorage.setItem('igcse_speaking_webapp_url', url);
-
-      try {
-        showToast("Testing connection with Google Sheets...");
-        const res = await fetch(url, { method: 'GET' });
-        const json = await res.json();
-        if (json.status === "success") {
-          showToast("Connected to Google Sheets successfully!");
-          if (json.candidates && json.candidates.length > 0) {
-            state.roster = json.candidates;
-            renderRosterTable();
-          }
-        } else {
-          showToast("Sheet response: " + json.message);
-        }
-      } catch (err) {
-        console.warn("Test sync error:", err);
-        showToast("Saved Web App URL. Ready for deployment sync.");
-      }
+      showToast(`Selected Card ${key}: ${CARDS[key]?.title || ''}`);
     }
 
     async function syncAllRosterToGoogleSheet() {
