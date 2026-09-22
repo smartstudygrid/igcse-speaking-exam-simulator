@@ -14,6 +14,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script>
+    function handleLogoFallback(img) {
+      if (!img) return;
+      const extensions = ['svg', 'jpg', 'jpeg', 'webp', 'gif'];
+      const currentSrc = img.src || '';
+      const parts = currentSrc.split('.');
+      const currentExt = (parts.pop() || '').toLowerCase();
+      
+      const nextIdx = extensions.indexOf(currentExt) + 1;
+      if (nextIdx < extensions.length) {
+        img.src = `smartstudygrid.${extensions[nextIdx]}`;
+      } else {
+        img.onerror = null;
+        // Render crisp borderless stylized brand typography if image file is not on server
+        img.outerHTML = `<div class="font-extrabold text-sm tracking-tight text-white flex items-center gap-0.5 border-0 outline-none select-none"><span class="text-amber-400">smart</span><span class="text-indigo-400">study</span><span class="text-slate-100">grid</span></div>`;
+      }
+    }
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
     body {
@@ -174,14 +192,20 @@
         </div>
 
         <!-- Quick Select from Pre-Loaded Candidates Roster -->
-        <div class="mb-3.5 bg-indigo-50/50 p-2.5 rounded-xl border border-indigo-200 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
+        <div class="mb-3.5 bg-indigo-50/50 p-2.5 rounded-xl border border-indigo-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2 flex-shrink-0">
             <i class="ph-bold ph-users-three text-indigo-600 text-lg"></i>
             <span class="text-xs font-bold text-indigo-900">Scheduled Candidate Roster:</span>
           </div>
-          <select id="rosterSelect" onchange="loadCandidateFromRoster(this.value)" class="text-xs bg-white border border-indigo-300 rounded-lg px-2.5 py-1 font-semibold text-slate-800 focus:outline-none cursor-pointer max-w-sm w-full">
-            <option value="">-- Load from saved candidate roster --</option>
-          </select>
+          <div class="flex items-center gap-2 flex-1 max-w-xl">
+            <select id="rosterSelect" onchange="loadCandidateFromRoster(this.value)" class="text-xs bg-white border border-indigo-300 rounded-lg px-2.5 py-1.5 font-semibold text-slate-800 focus:outline-none cursor-pointer flex-1">
+              <option value="">-- Select Candidate from Roster --</option>
+            </select>
+            <button onclick="fetchRosterFromGoogleSheet(true)" id="btnFetchRosterStep0" title="Fetch latest candidates directly from Google Sheet" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition flex-shrink-0">
+              <i class="ph-bold ph-arrows-clockwise" id="step0SyncIcon"></i>
+              <span class="hidden sm:inline">Fetch from Sheet</span>
+            </button>
+          </div>
         </div>
 
         <!-- Candidate & Exam Details Form -->
@@ -192,11 +216,11 @@
           </div>
           <div class="col-span-1">
             <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Candidate Number</label>
-            <input type="text" id="candNumber" value="0042" class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="e.g. 0042">
+            <input type="text" id="candNumber" value="" class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="e.g. 0042">
           </div>
           <div class="col-span-2">
             <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Candidate Name</label>
-            <input type="text" id="candName" value="Sarah Al-Mansoor" class="w-full px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="Full Candidate Name">
+            <input type="text" id="candName" value="" class="w-full px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="Enter or select Candidate Name">
           </div>
           <div class="col-span-1">
             <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Examiner</label>
@@ -1033,14 +1057,23 @@
 
         <!-- TAB 1: CANDIDATE ROSTER -->
         <div id="admPanel-roster" class="space-y-4">
-          <div class="bg-indigo-50/60 p-3 rounded-xl border border-indigo-200 flex items-center justify-between gap-3">
+          <div class="bg-indigo-50/60 p-3 rounded-xl border border-indigo-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
-              <h4 class="font-bold text-indigo-950">Advance Candidate Registration</h4>
-              <p class="text-[11px] text-indigo-800">Add candidates before exam day so the examiner can simply select them from the setup screen.</p>
+              <h4 class="font-bold text-indigo-950">Advance Candidate Registration & Google Sheet Sync</h4>
+              <p class="text-[11px] text-indigo-800">Type students in your Google Sheet, upload via CSV, or enter manually below.</p>
             </div>
-            <button onclick="populateSampleRoster()" class="px-3 py-1.5 rounded-lg bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 font-semibold shadow-sm text-xs">
-              + Load Sample Batch
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="downloadCsvTemplate()" class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold shadow-sm text-xs flex items-center gap-1">
+                <i class="ph-bold ph-file-csv text-emerald-600"></i> Download CSV Template
+              </button>
+              <label for="csvFileInput" class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold shadow-sm text-xs flex items-center gap-1 cursor-pointer">
+                <i class="ph-bold ph-upload-simple text-blue-600"></i> Upload CSV
+              </label>
+              <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCsvUpload(event)">
+              <button onclick="fetchRosterFromGoogleSheet(true)" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm text-xs flex items-center gap-1">
+                <i class="ph-bold ph-cloud-arrow-down"></i> Fetch from Sheet
+              </button>
+            </div>
           </div>
 
           <!-- Add Candidate Form -->
@@ -1484,12 +1517,8 @@ function doPost(e) {
       generatedMp3Blob: null,
       generatedFilename: '',
 
-      // Pre-scheduled candidate roster
-      roster: [
-        { candNumber: '0042', candName: 'Sarah Al-Mansoor', centerNumber: 'SA123', cardAssigned: 'A', status: 'In Progress' },
-        { candNumber: '0043', candName: 'Omar Tariq', centerNumber: 'SA123', cardAssigned: 'B', status: 'Pending' },
-        { candNumber: '0044', candName: 'Fatima Al-Hassan', centerNumber: 'SA123', cardAssigned: 'C', status: 'Pending' }
-      ],
+      // Scheduled candidate roster (loaded directly from Google Sheets or CSV)
+      roster: [],
       googleWebAppUrl: PERMANENT_GOOGLE_WEB_APP_URL || localStorage.getItem('igcse_speaking_webapp_url') || ''
     };
 
@@ -1522,8 +1551,8 @@ function doPost(e) {
     }
 
     function updateAnnouncementScript() {
-      const num = document.getElementById('candNumber').value.trim() || '0042';
-      const name = document.getElementById('candName').value.trim() || 'Sarah Al-Mansoor';
+      const num = document.getElementById('candNumber').value.trim() || '____';
+      const name = document.getElementById('candName').value.trim() || '[Candidate Name]';
       const exam = document.getElementById('examinerName').value.trim() || 'Dr. M. Richardson';
       const center = document.getElementById('centerNumber').value.trim() || 'SA123';
       const dateStr = getTodayFormatted();
@@ -1536,9 +1565,11 @@ function doPost(e) {
       if (formalScript) formalScript.textContent = verbatimText;
 
       const candSummary = document.getElementById('headerCandSummary');
-      if (candSummary) candSummary.textContent = `${name} (${num})`;
+      if (candSummary) {
+        candSummary.textContent = (name !== '[Candidate Name]') ? `${name} (${num})` : 'Select or Enter Candidate';
+      }
 
-      const cleanName = name.replace(/[^a-zA-Z0-9]/g, '_');
+      const cleanName = (name !== '[Candidate Name]' ? name : 'Candidate').replace(/[^a-zA-Z0-9]/g, '_');
       state.generatedFilename = `0510_${center}_${num}_${cleanName}.mp3`;
       const fnEl = document.getElementById('finalFilename');
       if (fnEl) fnEl.textContent = state.generatedFilename;
@@ -2452,18 +2483,25 @@ function doPost(e) {
     function renderRosterTable() {
       const tbody = document.getElementById('rosterTableBody');
       const rosterSelect = document.getElementById('rosterSelect');
+      if (!tbody || !rosterSelect) return;
+
       tbody.innerHTML = '';
-      rosterSelect.innerHTML = '<option value="">-- Load from saved candidate roster --</option>';
+      rosterSelect.innerHTML = '<option value="">-- Select Candidate from Roster --</option>';
+
+      if (state.roster.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">No candidates in roster. Add them in Google Sheet, upload a CSV, or add above.</td></tr>`;
+        return;
+      }
 
       state.roster.forEach((c, idx) => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50";
         tr.innerHTML = `
-          <td class="p-2.5 font-mono font-bold">${c.candNumber}</td>
-          <td class="p-2.5 font-semibold text-slate-800">${c.candName}</td>
-          <td class="p-2.5">${c.centerNumber}</td>
-          <td class="p-2.5 font-bold text-amber-700">Card ${c.cardAssigned}</td>
-          <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${c.status}</span></td>
+          <td class="p-2.5 font-mono font-bold">${c.candNumber || '-'}</td>
+          <td class="p-2.5 font-semibold text-slate-800">${c.candName || '-'}</td>
+          <td class="p-2.5">${c.centerNumber || 'SA123'}</td>
+          <td class="p-2.5 font-bold text-amber-700">Card ${c.cardAssigned || 'A'}</td>
+          <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${c.status || 'Pending'}</span></td>
           <td class="p-2.5 text-right space-x-1">
             <button onclick="loadCandidateDirectly(${idx})" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[10px] font-bold">Load</button>
             <button onclick="deleteCandidateDirectly(${idx})" class="px-2 py-1 bg-slate-200 hover:bg-red-600 hover:text-white rounded text-[10px] text-slate-700">Del</button>
@@ -2475,6 +2513,89 @@ function doPost(e) {
         const opt = new Option(`${c.candNumber} - ${c.candName} (Card ${c.cardAssigned})`, idx);
         rosterSelect.add(opt);
       });
+    }
+
+    async function fetchRosterFromGoogleSheet(notify = false) {
+      const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
+      if (!url) {
+        if (notify) showToast("No Google Web App URL configured.");
+        return;
+      }
+
+      const syncIcon = document.getElementById('step0SyncIcon');
+      if (syncIcon) syncIcon.classList.add('animate-spin');
+
+      try {
+        const res = await fetch(url, { method: 'GET' });
+        const json = await res.json();
+
+        if (json && json.status === "success" && Array.isArray(json.candidates)) {
+          state.roster = json.candidates;
+          renderRosterTable();
+          if (notify) showToast(`Fetched ${json.candidates.length} candidate(s) from Google Sheet!`);
+        } else {
+          if (notify) showToast(json.message || "Could not retrieve candidates.");
+        }
+      } catch (err) {
+        console.warn("Fetch roster error:", err);
+        if (notify) showToast("Could not connect to Google Sheet. Check network connection.");
+      } finally {
+        if (syncIcon) syncIcon.classList.remove('animate-spin');
+      }
+    }
+
+    function downloadCsvTemplate() {
+      const csvHeader = "Candidate Number,Candidate Name,Center Number,Card Assigned,Status\n";
+      const sampleRows = "0042,Sarah Al-Mansoor,SA123,A,Pending\n0043,Omar Tariq,SA123,B,Pending\n0044,Fatima Al-Hassan,SA123,C,Pending\n";
+      const blob = new Blob([csvHeader + sampleRows], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "candidates_roster_template.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast("CSV Template downloaded.");
+    }
+
+    function handleCsvUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const text = evt.target.result;
+          const lines = text.split(/\r\n|\n/).filter(line => line.trim().length > 0);
+          if (lines.length <= 1) {
+            showToast("CSV file contains no data rows.");
+            return;
+          }
+
+          let addedCount = 0;
+          // Skip header row
+          for (let i = 1; i < lines.length; i++) {
+            const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+            if (parts[0] || parts[1]) {
+              state.roster.push({
+                candNumber: parts[0] || '',
+                candName: parts[1] || '',
+                centerNumber: parts[2] || 'SA123',
+                cardAssigned: (parts[3] || 'A').toUpperCase(),
+                status: parts[4] || 'Pending'
+              });
+              addedCount++;
+            }
+          }
+
+          renderRosterTable();
+          showToast(`Uploaded ${addedCount} candidate(s) from CSV!`);
+          e.target.value = '';
+        } catch (err) {
+          console.error("CSV parse error:", err);
+          showToast("Failed to parse CSV file.");
+        }
+      };
+      reader.readAsText(file);
     }
 
     function addCandidateToRoster() {
@@ -2499,14 +2620,17 @@ function doPost(e) {
     function loadCandidateDirectly(idx) {
       const c = state.roster[idx];
       if (!c) return;
-      document.getElementById('candNumber').value = c.candNumber;
-      document.getElementById('candName').value = c.candName;
-      document.getElementById('centerNumber').value = c.centerNumber;
-      document.getElementById('cardSelect').value = c.cardAssigned;
-      onCardSelectionChange(c.cardAssigned);
+      document.getElementById('candNumber').value = c.candNumber || '';
+      document.getElementById('candName').value = c.candName || '';
+      document.getElementById('centerNumber').value = c.centerNumber || 'SA123';
+      
+      const cardKey = (c.cardAssigned || 'A').toUpperCase();
+      document.getElementById('cardSelect').value = cardKey;
+      onCardSelectionChange(cardKey);
+      
       updateAnnouncementScript();
       closeAdminWorkspaceModal();
-      showToast(`Candidate ${c.candName} loaded into exam workspace.`);
+      showToast(`Candidate ${c.candName} loaded. You can change Card anytime.`);
     }
 
     function deleteCandidateDirectly(idx) {
@@ -2515,17 +2639,13 @@ function doPost(e) {
       showToast("Candidate removed.");
     }
 
-    function populateSampleRoster() {
-      state.roster.push(
-        { candNumber: '0045', candName: 'Zayd Al-Mutawa', centerNumber: 'SA123', cardAssigned: 'D', status: 'Pending' },
-        { candNumber: '0046', candName: 'Aisha Al-Dosari', centerNumber: 'SA123', cardAssigned: 'E', status: 'Pending' }
-      );
-      renderRosterTable();
-      showToast("Sample candidate batch loaded.");
-    }
-
     function loadCandidateFromRoster(idxStr) {
-      if (idxStr === "") return;
+      if (idxStr === "") {
+        document.getElementById('candNumber').value = "";
+        document.getElementById('candName').value = "";
+        updateAnnouncementScript();
+        return;
+      }
       loadCandidateDirectly(parseInt(idxStr, 10));
     }
 
@@ -2736,21 +2856,7 @@ function doPost(e) {
       onCardSelectionChange('A');
       renderRosterTable();
 
-      // Pre-fetch latest candidate roster from Google Sheet if URL exists
-      const targetUrl = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
-      if (targetUrl) {
-        try {
-          fetch(targetUrl, { method: 'GET' })
-            .then(res => res.json())
-            .then(data => {
-              if (data && data.status === 'success' && data.candidates && data.candidates.length > 0) {
-                state.roster = data.candidates;
-                renderRosterTable();
-              }
-            })
-            .catch(() => { /* silent fallback to local roster */ });
-        } catch (_) {}
-      }
+      fetchRosterFromGoogleSheet(false);
 
       await populateMicrophoneList();
 
