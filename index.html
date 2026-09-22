@@ -27,7 +27,6 @@
         img.src = `smartstudygrid.${extensions[nextIdx]}`;
       } else {
         img.onerror = null;
-        // Render crisp borderless stylized brand typography if image file is not on server
         img.outerHTML = `<div class="font-extrabold text-sm tracking-tight text-white flex items-center gap-0.5 border-0 outline-none select-none"><span class="text-amber-400">smart</span><span class="text-indigo-400">study</span><span class="text-slate-100">grid</span></div>`;
       }
     }
@@ -42,15 +41,15 @@
     }
     @keyframes pulse-ring {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     .recording-pulse {
-      animation: pulse-ring 1.8s infinite;
+      animation: pulse-ring 1.6s infinite;
     }
     ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
       background: #f1f5f9;
@@ -66,7 +65,6 @@
   <header class="bg-slate-900 text-white border-b border-slate-800 px-4 py-2 flex items-center justify-between flex-shrink-0 z-30 shadow-md">
     <!-- Brand & Candidate Summary -->
     <div class="flex items-center gap-3">
-      <!-- Borderless SmartStudyGrid Logo Image Placeholder -->
       <div class="flex items-center justify-center border-0 p-0 m-0">
         <img id="appLogo" 
              src="smartstudygrid.png" 
@@ -77,19 +75,19 @@
       <div>
         <div class="flex items-center gap-1.5 leading-none">
           <span class="font-bold text-sm tracking-tight">Cambridge IGCSE™ Speaking</span>
-          <span class="bg-indigo-950 text-indigo-300 text-[10px] px-1.5 py-0.5 rounded border border-indigo-700/60 font-mono">0510 / 0511</span>
+          <span class="bg-indigo-950 text-indigo-300 text-[10px] px-2 py-0.5 rounded border border-indigo-700/60 font-mono font-semibold">0510 / 0511 • 0991 / 0993</span>
         </div>
         <div class="text-[11px] text-slate-400 font-medium flex items-center gap-2 mt-0.5">
-          <span id="headerCandSummary">Sarah Al-Mansoor (0042)</span>
+          <span id="headerCandSummary" class="text-slate-300 font-semibold">Select or Enter Candidate</span>
           <span>•</span>
           <span id="headerCardSummary" class="text-amber-400 font-semibold">Speaking Card A</span>
         </div>
       </div>
     </div>
 
-    <!-- Center: Timers (Total Elapsed & Section Countdown) & Mic Status -->
-    <div class="flex items-center gap-2 sm:gap-3 bg-slate-800/90 rounded-xl px-3 py-1 border border-slate-700 shadow-inner">
-      <!-- Total Elapsed Timer (Starts on entering Intro) -->
+    <!-- Center: Timers & Recording Status Cluster -->
+    <div class="flex items-center gap-2 sm:gap-3 bg-slate-800/95 rounded-xl px-3 py-1 border border-slate-700 shadow-inner">
+      <!-- Total Elapsed Timer -->
       <div class="flex items-center gap-1.5">
         <i class="ph-bold ph-clock text-amber-400 text-xs"></i>
         <div class="text-[10px] font-semibold uppercase text-slate-400 tracking-wider">Total:</div>
@@ -98,20 +96,26 @@
 
       <div class="h-4 w-px bg-slate-700"></div>
 
-      <!-- Section COUNTDOWN Timer -->
+      <!-- Section COUNTDOWN Timer with Mini Progress Bar -->
       <div class="flex items-center gap-1.5">
-        <i class="ph-bold ph-hourglass-high text-indigo-400 text-xs animate-pulse"></i>
+        <i class="ph-bold ph-hourglass-high text-indigo-400 text-xs"></i>
         <div class="text-[10px] font-semibold uppercase text-slate-400 tracking-wider" id="activeSectionLabel">Intro Left:</div>
         <div class="font-mono text-sm font-bold text-indigo-300 min-w-[44px]" id="sectionTimerDisplay">01:00</div>
+        <!-- Mini Section Progress Bar -->
+        <div class="w-10 bg-slate-950/80 rounded-full h-1.5 overflow-hidden border border-slate-700/60 hidden sm:block">
+          <div id="sectionTimerMiniBar" class="bg-indigo-400 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+        </div>
       </div>
 
       <div class="h-4 w-px bg-slate-700"></div>
 
-      <!-- Mic VU & Recording Status -->
+      <!-- High-Visibility Recording Status Pill Badge & VU Meter -->
       <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-slate-500" id="recDot"></span>
-        <span id="recStatusText" class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Standby</span>
-        <canvas id="vuMeter" width="46" height="12" class="rounded bg-slate-900 border border-slate-700/80"></canvas>
+        <div id="recStatusBadge" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-700/60 border border-slate-600 text-slate-300 text-[10px] font-bold tracking-wider uppercase transition-colors">
+          <span class="w-2 h-2 rounded-full bg-slate-400" id="recDot"></span>
+          <span id="recStatusText">STANDBY</span>
+        </div>
+        <canvas id="vuMeter" width="42" height="12" class="rounded bg-slate-950 border border-slate-700/80"></canvas>
       </div>
     </div>
 
@@ -145,7 +149,7 @@
     </div>
   </header>
 
-  <nav class="bg-slate-200/90 border-b border-slate-300 px-3 pt-1.5 flex-shrink-0">
+  <nav class="bg-slate-200/95 border-b border-slate-300 px-3 pt-1.5 flex-shrink-0 relative">
     <div class="flex items-center gap-1 overflow-x-auto text-xs font-semibold no-scrollbar">
       <button onclick="goToStep(0)" id="tab-0" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg bg-white text-indigo-700 border-t-2 border-indigo-600 shadow-sm transition">
         <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px]">0</span>
@@ -176,11 +180,15 @@
         <span>Export MP3 & PDF Grade</span>
       </button>
     </div>
+    <!-- Slim Overall Progress Bar Across Steps 0 to 6 -->
+    <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-300 overflow-hidden">
+      <div id="overallStepProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ease-out" style="width: 0%"></div>
+    </div>
   </nav>
 
   <main class="flex-1 overflow-hidden p-3 sm:p-4 flex flex-col justify-between max-w-7xl w-full mx-auto">
 
-    <!-- STEP 0: Setup, Candidate Information & Microphone Source (Announcement Preview Removed) -->
+    <!-- STEP 0: Setup, Candidate Information & Microphone Source -->
     <div id="step-0" class="step-panel h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-y-auto">
       <div>
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
@@ -227,9 +235,9 @@
             <input type="text" id="examinerName" value="Dr. M. Richardson" class="w-full px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="Examiner Name">
           </div>
           <div class="col-span-1">
-            <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Card Assigned (A–J)</label>
+            <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Card Assigned</label>
             <select id="cardSelect" onchange="onCardSelectionChange(this.value)" class="w-full px-2 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-amber-50/70 text-amber-950 focus:ring-1 focus:ring-amber-500 focus:outline-none cursor-pointer">
-              <!-- Dynamically populated from CARDS database -->
+              <!-- Dynamically populated from CARDS -->
             </select>
           </div>
         </div>
@@ -263,7 +271,7 @@
         <!-- Session Guidance Notice -->
         <div class="bg-slate-100 rounded-xl p-3 text-xs text-slate-600 flex items-center gap-2.5">
           <i class="ph-bold ph-lightbulb-filament text-amber-600 text-base"></i>
-          <span>Clicking <strong>Confirm & Proceed</strong> starts the master total elapsed clock and advances to Step 1. Start the audio recording before reading the verbatim ID script.</span>
+          <span>Clicking <strong>Confirm & Proceed</strong> starts the master total elapsed clock and advances to Step 1. Start audio recording before reading the verbatim ID script.</span>
         </div>
       </div>
 
@@ -279,6 +287,7 @@
       </div>
     </div>
 
+    <!-- STEP 1: Introduction Phase -->
     <div id="step-1" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -288,7 +297,7 @@
               <span class="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-bold">
                 Introduction Phase (~1 minute)
               </span>
-              <span class="text-xs text-slate-400">• Step 1 of 5</span>
+              <span class="text-xs text-slate-400">• Step 1 of 6</span>
             </div>
 
             <!-- Master Record Button -->
@@ -348,6 +357,7 @@
       </div>
     </div>
 
+    <!-- STEP 2: Warm-up Phase -->
     <div id="step-2" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -414,6 +424,7 @@
       </div>
     </div>
 
+    <!-- STEP 3: Part 1 Interview -->
     <div id="step-3" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -491,6 +502,7 @@
       </div>
     </div>
 
+    <!-- STEP 4: Part 2 Short Talk -->
     <div id="step-4" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -583,6 +595,7 @@
       </div>
     </div>
 
+    <!-- STEP 5: Part 3 Discussion -->
     <div id="step-5" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -643,6 +656,7 @@
       </div>
     </div>
 
+    <!-- STEP 6: Finalization, Exports & Setup Next Candidate -->
     <div id="step-6" class="step-panel hidden h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-hidden">
       <div class="flex-1 flex flex-col justify-between overflow-y-auto pr-1">
         <div>
@@ -650,7 +664,7 @@
           <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
             <div>
               <h2 class="text-lg font-bold text-slate-900">Session Finalization & Grade Exports</h2>
-              <p class="text-xs text-slate-500">Stop the master recording, listen back, download the MP3, and generate the 1-Page Official Grade Sheet PDF.</p>
+              <p class="text-xs text-slate-500">Stop master recording, verify audio playback, download MP3, and generate the 1-Page Official Grade Sheet PDF.</p>
             </div>
             <span class="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 font-semibold">Ready to Export</span>
           </div>
@@ -664,7 +678,7 @@
                 </div>
                 <div>
                   <h4 class="font-bold text-sm text-white" id="finalRecordingStatus">Session Audio Capture</h4>
-                  <p class="text-xs text-slate-400 font-mono" id="finalFilename">0510_SA123_0042_Sarah_Al-Mansoor.mp3</p>
+                  <p class="text-xs text-slate-400 font-mono" id="finalFilename">0042_Sarah_Al_Mansoor.mp3</p>
                 </div>
               </div>
 
@@ -711,11 +725,11 @@
             <div class="p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-2">
               <div>
                 <span class="text-slate-400 block text-[10px] uppercase font-semibold">Candidate:</span>
-                <span class="font-bold text-slate-800" id="summaryCand">Sarah Al-Mansoor</span>
+                <span class="font-bold text-slate-800" id="summaryCand">Candidate Name</span>
               </div>
               <div>
                 <span class="text-slate-400 block text-[10px] uppercase font-semibold">Candidate No:</span>
-                <span class="font-mono font-bold text-slate-800" id="summaryNum">0042</span>
+                <span class="font-mono font-bold text-slate-800" id="summaryNum">0000</span>
               </div>
               <div>
                 <span class="text-slate-400 block text-[10px] uppercase font-semibold">Card Assigned:</span>
@@ -760,7 +774,7 @@
         <button onclick="goToStep(5)" class="tab-action-btn px-4 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1.5">
           <i class="ph-bold ph-arrow-left"></i> Review Questions
         </button>
-        <button onclick="startNewCandidateSession()" class="tab-action-btn px-5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+        <button onclick="promptNextCandidateSession()" class="tab-action-btn px-5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
           <i class="ph-bold ph-user-plus"></i>
           <span>Setup Next Candidate</span>
         </button>
@@ -769,11 +783,10 @@
 
   </main>
 
-  <!-- Frozen Footer Bar -->
   <footer class="bg-slate-900 border-t border-slate-800 px-4 py-1.5 flex items-center justify-between text-[11px] text-slate-400 flex-shrink-0 z-30 shadow-inner select-text">
     <div class="flex items-center gap-2">
       <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span class="font-medium text-slate-300">Cambridge IGCSE™ Speaking Assessment Studio (0510 / 0511)</span>
+      <span class="font-medium text-slate-300">Cambridge IGCSE™ Speaking Assessment Studio (0510 / 0511 • 0991 / 0993)</span>
     </div>
     <div class="flex items-center gap-2 text-slate-300">
       <span>Created by:</span>
@@ -799,7 +812,7 @@
         <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight" id="modalCardTitle">Your future career</h2>
       </div>
 
-      <!-- Card Two Timers Panel (1m Auto Countdown + 2m Talk Timer with Start button) -->
+      <!-- Card Two Timers Panel -->
       <div class="my-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-900 p-2.5 rounded-2xl text-white">
         <!-- Timer 1: 1-Minute Prep Countdown (Starts automatically when modal opens) -->
         <div class="p-2.5 rounded-xl bg-slate-800/90 border border-purple-500/30 flex items-center justify-between">
@@ -819,7 +832,7 @@
           </div>
         </div>
 
-        <!-- Timer 2: 2-Minute Talk Countdown (With Start button) -->
+        <!-- Timer 2: 2-Minute Talk Countdown -->
         <div class="p-2.5 rounded-xl bg-slate-800/90 border border-indigo-500/30 flex items-center justify-between">
           <div>
             <div class="text-[10px] font-mono uppercase tracking-wider text-indigo-400 font-bold">
@@ -883,6 +896,7 @@
     </div>
   </div>
 
+  <!-- Mark Scheme Drawer -->
   <div id="notesDrawer" class="fixed inset-y-0 right-0 max-w-md w-full bg-white shadow-2xl border-l border-slate-200 z-50 transform translate-x-full transition-transform duration-200 flex flex-col">
     <!-- Drawer Header -->
     <div class="p-3.5 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">
@@ -895,7 +909,7 @@
       </div>
       <div class="flex items-center gap-2">
         <span class="font-mono text-sm font-bold bg-indigo-950 text-amber-400 border border-indigo-700/60 px-2 py-0.5 rounded" id="drawerTotalScoreDisplay">29 / 40</span>
-        <button onclick="toggleNotesDrawer()" class="text-slate-400 hover:text-white p-1">
+        <button onclick="closeNotesDrawer()" class="text-slate-400 hover:text-white p-1">
           <i class="ph-bold ph-x text-base"></i>
         </button>
       </div>
@@ -966,12 +980,13 @@
     <!-- Drawer Footer -->
     <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
       <span class="text-xs text-slate-500">Auto-saved to session dossier</span>
-      <button onclick="toggleNotesDrawer()" class="px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
+      <button onclick="closeNotesDrawer()" class="px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
         Close Marks
       </button>
     </div>
   </div>
 
+  <!-- Time Up Alert Modal -->
   <div id="timeUpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center animate-in fade-in zoom-in-95 duration-150">
       <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-3xl mx-auto mb-3">
@@ -992,6 +1007,7 @@
     </div>
   </div>
 
+  <!-- Admin Login Modal -->
   <div id="adminLoginModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 relative">
       <button onclick="closeAdminLoginModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600">
@@ -1021,6 +1037,7 @@
     </div>
   </div>
 
+  <!-- Admin Workspace Modal -->
   <div id="adminWorkspaceModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
     <div class="bg-white rounded-2xl max-w-5xl w-full h-[90vh] shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
       <!-- Admin Workspace Header -->
@@ -1256,6 +1273,27 @@
     </div>
   </div>
 
+  <!-- Reset Confirmation Modal for Setting Up Next Candidate -->
+  <div id="resetCandidateModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 text-center animate-in fade-in zoom-in-95 duration-150">
+      <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-3">
+        <i class="ph-bold ph-user-plus"></i>
+      </div>
+      <h3 class="text-base font-bold text-slate-900 mb-1">Setup Next Candidate?</h3>
+      <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+        This will finalize current memory buffers, increment the candidate number, and reset the studio for the next exam. Make sure you have downloaded any MP3 and PDF files needed.
+      </p>
+      <div class="flex items-center justify-center gap-2">
+        <button onclick="closeResetCandidateModal()" class="px-3.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition">
+          Cancel
+        </button>
+        <button onclick="executeFullAppReset()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
+          Confirm & Setup Next
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-2xl z-50 text-xs font-medium transition-all opacity-0 pointer-events-none transform translate-y-2 flex items-center gap-2">
     <i class="ph-fill ph-info text-blue-400"></i>
     <span id="toastMsg">Notification</span>
@@ -1422,114 +1460,25 @@
       }
     };
 
-    // Google Apps Script Code template with password
-    const APPS_SCRIPT_TEMPLATE = `/**
- * Cambridge IGCSE Speaking Exam Studio - Google Sheets Backend
- * Password protection: Pakistan@1947
- */
-const ADMIN_PASSWORD = "Pakistan@1947";
-
-function doGet(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Candidates");
-  if (!sheet) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Candidates sheet not found" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-  const data = sheet.getDataRange().getValues();
-  const headers = data[0];
-  const candidates = [];
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    if (row[0] || row[1]) {
-      candidates.push({
-        candNumber: String(row[0]),
-        candName: String(row[1]),
-        centerNumber: String(row[2] || "SA123"),
-        cardAssigned: String(row[3] || "A"),
-        status: String(row[4] || "Pending"),
-        totalScore: row[5] || ""
-      });
-    }
-  }
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", candidates: candidates }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  try {
-    const payload = JSON.parse(e.postData.contents);
-    if (payload.adminPassword !== ADMIN_PASSWORD) {
-      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Unauthorized password" }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName("Candidates");
-    if (!sheet) {
-      sheet = ss.insertSheet("Candidates");
-      sheet.appendRow(["Candidate Number", "Candidate Name", "Center Number", "Card", "Status", "Total Score (40)", "Grammar", "Vocab", "Dev", "Pron", "Date", "Notes"]);
-    }
-    
-    if (payload.action === "saveResult") {
-      const res = payload.result;
-      sheet.appendRow([
-        res.candNumber,
-        res.candName,
-        res.centerNumber,
-        res.cardAssigned,
-        "Completed",
-        res.totalScore,
-        res.scores.grammar,
-        res.scores.vocabulary,
-        res.scores.development,
-        res.scores.pronunciation,
-        res.date,
-        res.notes
-      ]);
-      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Result stored" }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    if (payload.action === "syncRoster") {
-      const roster = payload.roster;
-      roster.forEach(item => {
-        sheet.appendRow([item.candNumber, item.candName, item.centerNumber, item.cardAssigned, item.status || "Pending"]);
-      });
-      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Roster synced" }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Pong" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
-
-    // =========================================================================
-    // PERMANENT GOOGLE WEB APP CONFIGURATION
-    // Paste your deployed Google Web App Exec URL here inside the quotes.
-    // Once committed to GitHub, any PC anywhere will automatically connect!
-    // =========================================================================
     const PERMANENT_GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx5YWKQ08ebGtSWapKd1OJGQoTdSn1ao-zsNJ3h9YyR6grYVpvrz9SbGnmQs7-SgtI/exec";
 
-    // App State
+    // Application state with timestamp-anchored timer definitions to prevent drift
     const state = {
       currentStep: 0,
       activeCardKey: 'A',
       selectedAudioDeviceId: '',
       adminUnlocked: false,
 
-      // Total Elapsed Timer (Starts on moving to Step 1)
+      // Total Elapsed Timer (Timestamp-anchored)
+      totalStartTime: null,
       totalSeconds: 0,
       totalTimerInterval: null,
       totalTimerStarted: false,
 
-      // Section COUNTDOWN timers
-      // 0: Setup (not timed), 1: Intro (60s), 2: Warmup (120s), 3: Part 1 (180s), 4: Part 2 (240s), 5: Part 3 (210s), 6: Export (0s)
+      // Section COUNTDOWN timers (Timestamp-anchored)
       sectionDefaultDurations: { 0: 0, 1: 60, 2: 120, 3: 180, 4: 240, 5: 210, 6: 0 },
       sectionRemaining: { 0: 0, 1: 60, 2: 120, 3: 180, 4: 240, 5: 210, 6: 0 },
+      sectionEndTime: null,
       sectionInterval: null,
       sectionLabels: {
         0: 'Setup',
@@ -1542,11 +1491,13 @@ function doPost(e) {
       },
       timeUpTriggered: { 1: false, 2: false, 3: false, 4: false, 5: false },
 
-      // Candidate Card Embedded Timers
+      // Candidate Card Embedded Timers (Timestamp-anchored)
       cardPrepSeconds: 60,
+      cardPrepEndTime: null,
       cardPrepInterval: null,
       cardPrepRunning: false,
       cardTalkSeconds: 120,
+      cardTalkEndTime: null,
       cardTalkInterval: null,
       cardTalkRunning: false,
 
@@ -1570,33 +1521,18 @@ function doPost(e) {
 
       generatedMp3Blob: null,
       generatedFilename: '',
+      generatedPdfFilename: '',
 
-      // Scheduled candidate roster (loaded directly from Google Sheets or CSV)
       roster: [],
       googleWebAppUrl: PERMANENT_GOOGLE_WEB_APP_URL || localStorage.getItem('igcse_speaking_webapp_url') || ''
     };
 
     // Helper functions
     function formatTime(sec) {
-      const sVal = Math.max(0, sec);
+      const sVal = Math.max(0, Math.floor(sec));
       const m = Math.floor(sVal / 60).toString().padStart(2, '0');
       const s = (sVal % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
-    }
-
-    function handleLogoFallback(img) {
-      const extensions = ['svg', 'jpg', 'jpeg', 'webp', 'gif'];
-      const currentSrc = img.src || '';
-      const parts = currentSrc.split('.');
-      const currentExt = (parts.pop() || '').toLowerCase();
-      
-      const nextIdx = extensions.indexOf(currentExt) + 1;
-      if (nextIdx < extensions.length) {
-        img.src = `smartstudygrid.${extensions[nextIdx]}`;
-      } else {
-        // Render crisp borderless stylized brand typography if image file is not on server
-        img.outerHTML = `<div class="font-extrabold text-sm tracking-tight text-white flex items-center gap-0.5 border-0 outline-none select-none"><span class="text-amber-400">smart</span><span class="text-indigo-400">study</span><span class="text-slate-100">grid</span></div>`;
-      }
     }
 
     function getTodayFormatted() {
@@ -1608,11 +1544,8 @@ function doPost(e) {
       const num = document.getElementById('candNumber').value.trim() || '____';
       const name = document.getElementById('candName').value.trim() || '[Candidate Name]';
       const exam = document.getElementById('examinerName').value.trim() || 'Dr. M. Richardson';
-      const center = document.getElementById('centerNumber').value.trim() || 'SA123';
       const dateStr = getTodayFormatted();
 
-      // STRICT verbatim announcement format:
-      // Candidate number 0042, candidate name Sarah Al-Mansoor. Examiner: Dr. M. Richardson. Date: "show current date".
       const verbatimText = `Candidate number ${num}, candidate name ${name}. Examiner: ${exam}. Date: ${dateStr}.`;
 
       const formalScript = document.getElementById('formalIdScript');
@@ -1623,26 +1556,30 @@ function doPost(e) {
         candSummary.textContent = (name !== '[Candidate Name]') ? `${name} (${num})` : 'Select or Enter Candidate';
       }
 
-      const cleanName = (name !== '[Candidate Name]' ? name : 'Candidate').replace(/[^a-zA-Z0-9]/g, '_');
-      state.generatedFilename = `0510_${center}_${num}_${cleanName}.mp3`;
+      // Standard sanitized candidate name logic: [a-zA-Z0-9_]
+      const cleanName = (name !== '[Candidate Name]' ? name : 'Candidate')
+        .trim()
+        .replace(/[\s\-]+/g, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '');
+
+      const validNum = num !== '____' ? num : '0000';
+
+      // Required filename standard: CandidateNumber_CandidateName.mp3 & .pdf
+      state.generatedFilename = `${validNum}_${cleanName}.mp3`;
+      state.generatedPdfFilename = `${validNum}_${cleanName}.pdf`;
+
       const fnEl = document.getElementById('finalFilename');
       if (fnEl) fnEl.textContent = state.generatedFilename;
     }
 
-    // Helper: Find next unused letter from A to Z (or A2, B2 if exhausted)
     function getNextAvailableCardKey(preferred = '') {
       const pref = (preferred || '').toUpperCase().trim();
-      if (pref && !CARDS[pref]) {
-        return pref;
-      }
+      if (pref && !CARDS[pref]) return pref;
       const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       for (let i = 0; i < alphabet.length; i++) {
         const letter = alphabet[i];
-        if (!CARDS[letter]) {
-          return letter;
-        }
+        if (!CARDS[letter]) return letter;
       }
-      // Fallback if all 26 are occupied: e.g. K2, J2, etc.
       let counter = 2;
       while (true) {
         const candidate = `${pref || 'K'}${counter}`;
@@ -1651,7 +1588,6 @@ function doPost(e) {
       }
     }
 
-    // Populate dropdown of Speaking Cards
     function renderCardsDropdown() {
       const select = document.getElementById('cardSelect');
       const newCandCardSelect = document.getElementById('newCandCard');
@@ -1797,12 +1733,50 @@ function doPost(e) {
       render();
     }
 
-    // Step switching & Section Countdown Timers
+    // High-visibility recording cluster badge updater
+    function updateRecStatusUI(status) {
+      const badge = document.getElementById('recStatusBadge');
+      const dot = document.getElementById('recDot');
+      const text = document.getElementById('recStatusText');
+      if (!badge || !dot || !text) return;
+
+      if (status === 'recording') {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-950/80 border border-red-500/80 text-red-200 text-[10px] font-bold tracking-wider uppercase shadow-sm shadow-red-900/30";
+        dot.className = "w-2 h-2 rounded-full bg-red-500 recording-pulse";
+        text.textContent = "REC LIVE";
+      } else if (status === 'stopped') {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-950/70 border border-amber-500/60 text-amber-200 text-[10px] font-bold tracking-wider uppercase";
+        dot.className = "w-2 h-2 rounded-sm bg-amber-400";
+        text.textContent = "STOPPED";
+      } else {
+        badge.className = "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-700/60 border border-slate-600 text-slate-300 text-[10px] font-bold tracking-wider uppercase";
+        dot.className = "w-2 h-2 rounded-full bg-slate-400";
+        text.textContent = "STANDBY";
+      }
+    }
+
     function goToStep(stepIndex) {
       state.currentStep = stepIndex;
 
+      // Update Overall Progress Bar (Step 0 of 6 -> 0% to 100%)
+      const overallBar = document.getElementById('overallStepProgressBar');
+      if (overallBar) {
+        const percent = Math.min(100, Math.round((stepIndex / 6) * 100));
+        overallBar.style.width = `${percent}%`;
+      }
+
       // Update Section Header Countdown Label
       document.getElementById('activeSectionLabel').textContent = state.sectionLabels[stepIndex];
+
+      // Reset & anchor countdown target timestamp for newly entered section
+      if (stepIndex >= 1 && stepIndex <= 5) {
+        const duration = state.sectionDefaultDurations[stepIndex] || 60;
+        state.sectionRemaining[stepIndex] = duration;
+        state.sectionEndTime = Date.now() + (duration * 1000);
+      } else {
+        state.sectionEndTime = null;
+      }
+
       updateSectionCountdownDisplay();
 
       // Switch panels
@@ -1824,19 +1798,23 @@ function doPost(e) {
         }
       }
 
-      // Final Step Summary
+      // Requirement 4: Auto-open mark scheme drawer explicitly when moving to Step 6
       if (stepIndex === 6) {
-        document.getElementById('summaryCand').textContent = document.getElementById('candName').value;
-        document.getElementById('summaryNum').textContent = document.getElementById('candNumber').value;
+        document.getElementById('summaryCand').textContent = document.getElementById('candName').value || 'Candidate Name';
+        document.getElementById('summaryNum').textContent = document.getElementById('candNumber').value || '0000';
         document.getElementById('summaryCard').textContent = `Speaking Card ${state.activeCardKey}`;
         document.getElementById('summaryDuration').textContent = formatTime(state.totalSeconds);
         document.getElementById('summaryTotalScore').textContent = calculateTotalScore();
+        openNotesDrawer();
       }
     }
 
     function updateSectionCountdownDisplay() {
       const remaining = state.sectionRemaining[state.currentStep] || 0;
+      const defaultDuration = state.sectionDefaultDurations[state.currentStep] || 1;
       const displayEl = document.getElementById('sectionTimerDisplay');
+      const miniBar = document.getElementById('sectionTimerMiniBar');
+
       if (displayEl) {
         displayEl.textContent = formatTime(remaining);
         if (remaining <= 15 && remaining > 0) {
@@ -1845,25 +1823,65 @@ function doPost(e) {
           displayEl.className = "font-mono text-sm font-bold text-indigo-300 min-w-[44px]";
         }
       }
+
+      // Update Header Mini Progress Bar
+      if (miniBar) {
+        const pct = Math.min(100, Math.max(0, (remaining / defaultDuration) * 100));
+        miniBar.style.width = `${pct}%`;
+        if (remaining <= 15 && remaining > 0) {
+          miniBar.className = "bg-red-500 h-full rounded-full transition-all duration-300 animate-pulse";
+        } else {
+          miniBar.className = "bg-indigo-400 h-full rounded-full transition-all duration-300";
+        }
+      }
     }
 
+    // Timestamp-anchored timing calculations (Eliminating naive setInterval drift)
     function startSectionCountdownLoop() {
       if (state.sectionInterval) clearInterval(state.sectionInterval);
       state.sectionInterval = setInterval(() => {
-        const step = state.currentStep;
-        if (step >= 1 && step <= 5) {
-          if (state.sectionRemaining[step] > 0) {
-            state.sectionRemaining[step]--;
-            updateSectionCountdownDisplay();
-            if (state.sectionRemaining[step] === 0 && !state.timeUpTriggered[step]) {
-              state.timeUpTriggered[step] = true;
-              playChime();
-              showTimeUpModal(step);
-            }
-          }
-        }
-      }, 1000);
+        recalibrateSectionTimer();
+      }, 500);
     }
+
+    function recalibrateSectionTimer() {
+      const step = state.currentStep;
+      if (step >= 1 && step <= 5 && state.sectionEndTime) {
+        const msLeft = state.sectionEndTime - Date.now();
+        const secLeft = Math.max(0, Math.ceil(msLeft / 1000));
+        state.sectionRemaining[step] = secLeft;
+        updateSectionCountdownDisplay();
+
+        if (secLeft === 0 && !state.timeUpTriggered[step]) {
+          state.timeUpTriggered[step] = true;
+          playChime();
+          showTimeUpModal(step);
+        }
+      }
+    }
+
+    function recalibrateTotalTimer() {
+      if (state.totalTimerStarted && state.totalStartTime) {
+        state.totalSeconds = Math.floor((Date.now() - state.totalStartTime) / 1000);
+        document.getElementById('totalTimerDisplay').textContent = formatTime(state.totalSeconds);
+      }
+    }
+
+    // Instant resync on tab visibility change (eliminates background tab throttling drift)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        recalibrateTotalTimer();
+        recalibrateSectionTimer();
+        if (state.cardPrepRunning && state.cardPrepEndTime) {
+          state.cardPrepSeconds = Math.max(0, Math.ceil((state.cardPrepEndTime - Date.now()) / 1000));
+          document.getElementById('cardPrepTimerDisplay').textContent = formatTime(state.cardPrepSeconds);
+        }
+        if (state.cardTalkRunning && state.cardTalkEndTime) {
+          state.cardTalkSeconds = Math.max(0, Math.ceil((state.cardTalkEndTime - Date.now()) / 1000));
+          document.getElementById('cardTalkTimerDisplay').textContent = formatTime(state.cardTalkSeconds);
+        }
+      }
+    });
 
     function showTimeUpModal(step) {
       const names = {
@@ -1885,33 +1903,29 @@ function doPost(e) {
     function extendSectionTime(extraSeconds = 30) {
       const step = state.currentStep;
       state.sectionRemaining[step] += extraSeconds;
+      state.sectionEndTime = Date.now() + (state.sectionRemaining[step] * 1000);
       state.timeUpTriggered[step] = false;
       updateSectionCountdownDisplay();
       dismissTimeUpModal();
       showToast(`+${extraSeconds} seconds added.`);
     }
 
-    // Called when clicking "Confirm & Proceed to Official Introduction"
     function startSessionAndProceed() {
       updateAnnouncementScript();
 
-      // Master Elapsed Timer begins counting up now
       if (!state.totalTimerStarted) {
         state.totalTimerStarted = true;
+        state.totalStartTime = Date.now();
         state.totalTimerInterval = setInterval(() => {
-          state.totalSeconds++;
-          document.getElementById('totalTimerDisplay').textContent = formatTime(state.totalSeconds);
-        }, 1000);
+          recalibrateTotalTimer();
+        }, 500);
       }
 
-      // Start section countdown loop
       startSectionCountdownLoop();
-
       goToStep(1);
       showToast("Elapsed timer started.");
     }
 
-    // Master Audio Recording
     async function startMasterRecording() {
       if (state.isRecording) {
         showToast("Recording already active.");
@@ -1944,11 +1958,7 @@ function doPost(e) {
         state.mediaRecorder.start(1000);
         state.isRecording = true;
 
-        const recDot = document.getElementById('recDot');
-        recDot.className = "w-2.5 h-2.5 rounded-full bg-red-500 recording-pulse";
-        const statusText = document.getElementById('recStatusText');
-        statusText.textContent = "REC ON";
-        statusText.className = "text-[10px] font-bold uppercase tracking-wider text-red-400";
+        updateRecStatusUI('recording');
 
         const btnRec = document.getElementById('btnStartRecordingMain');
         if (btnRec) {
@@ -1975,11 +1985,7 @@ function doPost(e) {
         state.mediaRecorder.stop();
       }
 
-      const recDot = document.getElementById('recDot');
-      recDot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
-      const statusText = document.getElementById('recStatusText');
-      statusText.textContent = "STOPPED";
-      statusText.className = "text-[10px] font-bold uppercase tracking-wider text-slate-400";
+      updateRecStatusUI('stopped');
 
       const btnStop = document.getElementById('btnStopMaster');
       if (btnStop) {
@@ -2102,14 +2108,13 @@ function doPost(e) {
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(state.generatedMp3Blob);
-      a.download = state.generatedFilename || 'IGCSE_Speaking_Exam.mp3';
+      a.download = state.generatedFilename || 'Speaking_Exam.mp3';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       showToast("MP3 download started.");
     }
 
-    // Audio chime sound
     function playChime() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2130,12 +2135,9 @@ function doPost(e) {
       }
     }
 
-    // Candidate Card Modal & Automatic 1-Minute Prep Countdown
     function openCandidateModal() {
       const modal = document.getElementById('candidateModal');
       modal.classList.remove('hidden');
-
-      // 1-minute countdown MUST start as soon as the card is displayed!
       startCardPrepCountdown();
     }
 
@@ -2146,12 +2148,14 @@ function doPost(e) {
     function startCardPrepCountdown() {
       if (state.cardPrepRunning) return;
       state.cardPrepRunning = true;
+      state.cardPrepEndTime = Date.now() + (state.cardPrepSeconds * 1000);
       document.getElementById('btnCardPrepPause').textContent = "Pause";
 
       if (state.cardPrepInterval) clearInterval(state.cardPrepInterval);
       state.cardPrepInterval = setInterval(() => {
-        if (state.cardPrepSeconds > 0) {
-          state.cardPrepSeconds--;
+        if (state.cardPrepRunning && state.cardPrepEndTime) {
+          const msLeft = state.cardPrepEndTime - Date.now();
+          state.cardPrepSeconds = Math.max(0, Math.ceil(msLeft / 1000));
           document.getElementById('cardPrepTimerDisplay').textContent = formatTime(state.cardPrepSeconds);
           if (state.cardPrepSeconds === 0) {
             clearInterval(state.cardPrepInterval);
@@ -2161,7 +2165,7 @@ function doPost(e) {
             document.getElementById('btnCardPrepPause').textContent = "Done";
           }
         }
-      }, 1000);
+      }, 500);
     }
 
     function toggleCardPrep() {
@@ -2179,11 +2183,11 @@ function doPost(e) {
       clearInterval(state.cardPrepInterval);
       state.cardPrepRunning = false;
       state.cardPrepSeconds = 60;
+      state.cardPrepEndTime = null;
       document.getElementById('cardPrepTimerDisplay').textContent = "01:00";
       document.getElementById('btnCardPrepPause').textContent = "Start";
     }
 
-    // 2-Minute Talk Countdown on Candidate Card
     function toggleCardTalk() {
       const btn = document.getElementById('btnCardTalkStart');
       const icon = document.getElementById('cardTalkIcon');
@@ -2197,13 +2201,15 @@ function doPost(e) {
       }
 
       state.cardTalkRunning = true;
+      state.cardTalkEndTime = Date.now() + (state.cardTalkSeconds * 1000);
       icon.className = "ph-fill ph-pause";
       btn.querySelector('span').textContent = "Pause";
 
       if (state.cardTalkInterval) clearInterval(state.cardTalkInterval);
       state.cardTalkInterval = setInterval(() => {
-        if (state.cardTalkSeconds > 0) {
-          state.cardTalkSeconds--;
+        if (state.cardTalkRunning && state.cardTalkEndTime) {
+          const msLeft = state.cardTalkEndTime - Date.now();
+          state.cardTalkSeconds = Math.max(0, Math.ceil(msLeft / 1000));
           document.getElementById('cardTalkTimerDisplay').textContent = formatTime(state.cardTalkSeconds);
           if (state.cardTalkSeconds === 0) {
             clearInterval(state.cardTalkInterval);
@@ -2214,13 +2220,14 @@ function doPost(e) {
             btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
           }
         }
-      }, 1000);
+      }, 500);
     }
 
     function resetCardTalk() {
       clearInterval(state.cardTalkInterval);
       state.cardTalkRunning = false;
       state.cardTalkSeconds = 120;
+      state.cardTalkEndTime = null;
       document.getElementById('cardTalkTimerDisplay').textContent = "02:00";
       const btn = document.getElementById('btnCardTalkStart');
       btn.querySelector('span').textContent = "Start 2m";
@@ -2236,7 +2243,6 @@ function doPost(e) {
       document.getElementById('p2CardLabel').textContent = `Speaking Card ${cardKey}: ${card.title}`;
       document.getElementById('p2CardPrompt').textContent = card.intro || `Topic: ${card.title} — Option 1: ${card.opt1} | Option 2: ${card.opt2}`;
 
-      // Update Part 1 topic and script if available
       const p1TopicDisplay = document.getElementById('p1TopicDisplay');
       const p1ScriptDisplay = document.getElementById('p1ScriptDisplay');
       const p1Container = document.getElementById('p1QuestionsContainer');
@@ -2263,7 +2269,6 @@ function doPost(e) {
         });
       }
 
-      // Update Warmup questions if available
       const warmupContainer = document.getElementById('warmupQuestionsContainer');
       if (warmupContainer && card.warmupQuestions && card.warmupQuestions.length > 0) {
         warmupContainer.innerHTML = '';
@@ -2281,7 +2286,6 @@ function doPost(e) {
         });
       }
 
-      // Update Part 3 Discussion questions
       const p3Container = document.getElementById('p3QuestionsContainer');
       if (p3Container) {
         p3Container.innerHTML = '';
@@ -2299,7 +2303,6 @@ function doPost(e) {
         });
       }
 
-      // Update Candidate Card Modal
       document.getElementById('modalCardBadge').textContent = `Speaking Assessment Card ${cardKey}`;
       document.getElementById('modalCardTitle').textContent = card.title;
       document.getElementById('modalOpt1').textContent = card.opt1;
@@ -2327,10 +2330,22 @@ function doPost(e) {
       }
     }
 
-    // Mark Scheme Drawer & Descriptors
+    function openNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      if (drawer) drawer.classList.remove('translate-x-full');
+    }
+
+    function closeNotesDrawer() {
+      const drawer = document.getElementById('notesDrawer');
+      if (drawer) drawer.classList.add('translate-x-full');
+    }
+
     function toggleNotesDrawer() {
       const drawer = document.getElementById('notesDrawer');
-      drawer.classList.toggle('translate-x-full');
+      if (drawer) {
+        if (drawer.classList.contains('translate-x-full')) openNotesDrawer();
+        else closeNotesDrawer();
+      }
     }
 
     function getLevelFromMark(m) {
@@ -2370,7 +2385,6 @@ function doPost(e) {
       notes.focus();
     }
 
-    // 1-Page Official Assessment Grade Sheet (PDF Generation via jsPDF)
     function generateSinglePagePdfSlip() {
       if (!window.jspdf || !window.jspdf.jsPDF) {
         showToast("PDF generation engine loading...");
@@ -2394,16 +2408,16 @@ function doPost(e) {
 
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
-      doc.text("CAMBRIDGE IGCSE™ ENGLISH AS A SECOND LANGUAGE", 14, 12);
+      doc.setFontSize(13);
+      doc.text("CAMBRIDGE IGCSE™ ENGLISH AS A SECOND LANGUAGE", 14, 11);
 
-      doc.setFontSize(10);
+      doc.setFontSize(9.5);
       doc.setFont("helvetica", "normal");
-      doc.text("0510 / 0511 SPEAKING ASSESSMENT RECORD & GRADING SLIP", 14, 19);
+      doc.text("0510 / 0511 • 0991 / 0993 SPEAKING ASSESSMENT RECORD & GRADING SLIP", 14, 18);
 
       doc.setFontSize(9);
       doc.setTextColor(245, 158, 11);
-      doc.text(`CARD ${state.activeCardKey}: ${cardTitle.toUpperCase()}`, 14, 25);
+      doc.text(`CARD ${state.activeCardKey}: ${cardTitle.toUpperCase()}`, 14, 24);
 
       // Candidate & Center Details Box
       doc.setDrawColor(203, 213, 225);
@@ -2439,7 +2453,7 @@ function doPost(e) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.setTextColor(30, 41, 59);
-      doc.text("Assessment Criteria (Cambridge 0510)", 18, 75);
+      doc.text("Assessment Criteria (Cambridge 0510 / 0511)", 18, 75);
       doc.text("Range", 120, 75);
       doc.text("Mark Awarded", 155, 75);
 
@@ -2500,21 +2514,20 @@ function doPost(e) {
       doc.setFontSize(8);
       doc.setTextColor(100, 116, 139);
       doc.text("Exam Total Session Duration: " + formatTime(state.totalSeconds), 14, yPos + 7);
-      doc.text("Standard Cambridge 0510 Speaking Component", 14, yPos + 12);
+      doc.text("Standard Cambridge 0510 / 0511 • 0991 / 0993 Speaking Component", 14, yPos + 12);
 
       doc.setFont("helvetica", "bold");
       doc.setTextColor(30, 41, 59);
       doc.text("Examiner Signature: ____________________________", 115, yPos + 9);
 
-      const fileName = `0510_${center}_${candNo}_GradeSheet.pdf`;
-      doc.save(fileName);
+      // Download with CandidateNumber_CandidateName.pdf
+      const pdfOutName = state.generatedPdfFilename || `${candNo}_Candidate.pdf`;
+      doc.save(pdfOutName);
       showToast("1-Page Grade Sheet PDF downloaded.");
 
-      // Automatically post grade sheet to Google Sheets
       syncCurrentCandidateToGoogleSheet();
     }
 
-    // Direct Sync Candidate Exam Record to Google Sheet
     async function syncCurrentCandidateToGoogleSheet() {
       const url = state.googleWebAppUrl || PERMANENT_GOOGLE_WEB_APP_URL;
       if (!url) {
@@ -2527,7 +2540,7 @@ function doPost(e) {
         action: "saveResult",
         result: {
           candNumber: document.getElementById('candNumber').value.trim() || '0042',
-          candName: document.getElementById('candName').value.trim() || 'Sarah Al-Mansoor',
+          candName: document.getElementById('candName').value.trim() || 'Candidate Name',
           centerNumber: document.getElementById('centerNumber').value.trim() || 'SA123',
           cardAssigned: state.activeCardKey,
           totalScore: calculateTotalScore(),
@@ -2541,7 +2554,6 @@ function doPost(e) {
         const btn = document.getElementById('btnSyncCurrentSheet');
         if (btn) btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i><span>Syncing...</span>`;
 
-        // Using text/plain avoids CORS preflight OPTIONS request on Google Apps Script
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
@@ -2557,7 +2569,6 @@ function doPost(e) {
       }
     }
 
-    // Admin Access, Candidate Roster, PDF Uploader, and Code.gs
     function openAdminModal() {
       if (state.adminUnlocked) {
         openAdminWorkspace();
@@ -2587,7 +2598,6 @@ function doPost(e) {
       document.getElementById('adminWorkspaceModal').classList.remove('hidden');
       renderRosterTable();
       renderActiveCardsInAdmin();
-      document.getElementById('appsScriptCodeArea').value = APPS_SCRIPT_TEMPLATE;
       
       const urlInput = document.getElementById('googleWebAppUrl');
       if (urlInput) {
@@ -2642,7 +2652,6 @@ function doPost(e) {
         `;
         tbody.appendChild(tr);
 
-        // Add to quick select dropdown in Step 0
         const opt = new Option(`${c.candNumber} - ${c.candName} (Card ${c.cardAssigned})`, idx);
         rosterSelect.add(opt);
       });
@@ -2667,7 +2676,6 @@ function doPost(e) {
             state.roster = json.candidates;
             renderRosterTable();
           }
-          // Also merge cloud cards from Google Sheet
           if (json.cards && typeof json.cards === "object") {
             Object.keys(json.cards).forEach(k => {
               CARDS[k] = json.cards[k];
@@ -2715,7 +2723,6 @@ function doPost(e) {
           }
 
           let addedCount = 0;
-          // Skip header row
           for (let i = 1; i < lines.length; i++) {
             const parts = lines[i].split(',').map(p => p.trim().replace(/^"|"$/g, ''));
             if (parts[0] || parts[1]) {
@@ -2792,7 +2799,6 @@ function doPost(e) {
       loadCandidateDirectly(parseInt(idxStr, 10));
     }
 
-    // PDF Speaking Card Text Extractor (pdf.js)
     async function handleCardPdfUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -2809,54 +2815,40 @@ function doPost(e) {
           fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // Clean redundant spaces
         const normalized = fullText.replace(/\s+/g, ' ');
 
-        // 1. Extract Card Letter (e.g. "SPEAKING ASSESSMENT J" -> "J")
         const cardMatch = normalized.match(/SPEAKING\s+ASSESSMENT\s+([A-Z])/i) || normalized.match(/Card\s+([A-Z])/i);
         const originalCardLetter = cardMatch ? cardMatch[1].toUpperCase() : 'K';
-
-        // Check if letter already exists in CARDS. If so, find the next available letter to avoid replacing!
         const targetCardKey = getNextAvailableCardKey(originalCardLetter);
 
-        // 2. Extract Card Title from Part 2 (e.g. "give the candidate the card A new business.")
         let title = "";
         const titleMatch = normalized.match(/give\s+the\s+candidate\s+the\s+card\s+([^\.\n\r]+)[\.\n\r]/i);
         if (titleMatch) {
           title = titleMatch[1].trim();
         } else {
-          // Fallback search after "Here is your card."
           const fallbackTitle = normalized.match(/Here is your card\.\s*([A-Za-z0-9\s]+?)(?:Your\s|You\s)/i);
           if (fallbackTitle) title = fallbackTitle[1].trim();
           else title = file.name.replace('.pdf', '').replace(/_/g, ' ');
         }
 
-        // 3. Extract Intro & Options
-        // Looking between "Here is your card." and "Talk about the advantages"
         let introText = "";
         let opt1 = "Option 1 from card";
         let opt2 = "Option 2 from card";
-        let guidanceText = "Talk about the advantages and disadvantages of each idea. Say which idea you would prefer, and why.";
 
         const p2SectionMatch = normalized.match(/Here\s+is\s+your\s+card\.\s*([\s\S]*?)(?:Talk\s+about\s+the\s+advantages|Allow\s+one\s+minute)/i);
         if (p2SectionMatch) {
           const p2Content = p2SectionMatch[1];
-          // Strip title from beginning if present
           let body = p2Content.replace(new RegExp(`^${title}\\s*`, 'i'), '').trim();
 
-          // Match intro sentence ending in colon or ideas:
           const introMatch = body.match(/^([\s\S]*?(?:following ideas:|options:|consider:))/i);
           if (introMatch) {
             introText = introMatch[1].trim();
             const rest = body.substring(introMatch[0].length).trim();
-            // Split options by sentence or bullet
-            const optionSentences = rest.split(/(?=[a-z])(?<=[a-z0-9])\s+(?=[a-z])/i);
             const rawOptions = rest.split(/(?:•|-|\n|\r)/).map(s => s.trim()).filter(s => s.length > 5);
             if (rawOptions.length >= 2) {
               opt1 = rawOptions[0];
               opt2 = rawOptions[1];
             } else {
-              // Heuristic match for "recycling..." and "organising..."
               const splitMatch = rest.match(/([A-Z\s0-9a-z\-]+?(?:toys|skills|first|work|study))([A-Z\s0-9a-z\-]+)/i);
               if (splitMatch) {
                 opt1 = splitMatch[1].trim();
@@ -2869,33 +2861,27 @@ function doPost(e) {
           }
         }
 
-        // 4. Extract Part 3 Discussion Questions (Robust multi-sentence parser)
         let discussionQuestions = [];
         const p3Match = normalized.match(/Part\s+3\s+Discussion[\s\S]*?(?:Examiner\s+script:\s*Thank\s+you|This\s+is\s+the\s+end\s+of\s+the\s+test|UCLES\s+\d{4}|$)/i);
         if (p3Match) {
           let p3Block = p3Match[0];
 
-          // Isolate questions after "Before we start, do you have any questions?"
           const introQMatch = p3Block.match(/do\s+you\s+have\s+any\s+questions\s*\?/i);
           if (introQMatch) {
             p3Block = p3Block.substring(introQMatch.index + introQMatch[0].length);
           }
 
-          // Strip footer and final examiner scripts
           p3Block = p3Block.replace(/Examiner\s+script\s*:[\s\S]*$/i, '');
           p3Block = p3Block.replace(/Thank\s+you[\s\S]*$/i, '');
           p3Block = p3Block.replace(/UCLES\s+\d{4}[\s\S]*$/i, '');
           p3Block = p3Block.replace(/\d{4}\/\d{2}\/TN[\s\S]*$/i, '');
 
-          // Match questions that may contain statements with periods before the prompt (e.g. "...business. Do you agree?")
-          // and keep attached follow-up prompts like "Why? Why not?" or "What is your opinion?"
           const rawQ = p3Block.match(/(?:[A-Z0-9"'][^?]+?(?:\?\s*(?:Why\?\s*(?:Why not\?)?|Why not\?|What\s+is\s+your\s+opinion\?|What\s+do\s+you\s+think\?))?\?)/g) || [];
           discussionQuestions = rawQ
             .map(q => q.trim().replace(/\s+/g, ' '))
             .filter(q => q.length > 10 && !/do\s+you\s+have\s+any\s+questions/i.test(q));
         }
 
-        // 5. Extract Part 1 Topic & Questions
         let part1Topic = "";
         let part1Questions = [];
         const p1Match = normalized.match(/Part\s+1\s+Interview[\s\S]*?Part\s+2\s+Short\s+talk/i);
@@ -2918,7 +2904,6 @@ function doPost(e) {
             .filter(q => q.length > 10 && !/do\s+you\s+have\s+any\s+questions/i.test(q));
         }
 
-        // 6. Extract Warm-up Questions
         let warmupQuestions = [];
         const wmMatch = normalized.match(/Warm-up[\s\S]*?Part\s+1\s+Interview/i);
         if (wmMatch) {
@@ -2927,7 +2912,6 @@ function doPost(e) {
           warmupQuestions = rawWm.map(q => q.trim()).filter(q => q.length > 10);
         }
 
-        // Fallbacks if regex was partial
         if (discussionQuestions.length === 0) {
           discussionQuestions = [
             "Do you think it is better to work for someone else or have your own business? Why? Why not?",
@@ -2937,7 +2921,6 @@ function doPost(e) {
           ];
         }
 
-        // Fill form fields
         document.getElementById('newCardKey').value = targetCardKey;
         document.getElementById('newCardTitle').value = title || "A new business";
         document.getElementById('newCardP1Topic').value = part1Topic || "Competitions";
@@ -2946,14 +2929,12 @@ function doPost(e) {
         document.getElementById('newCardOpt2').value = opt2 || "organising courses to teach older people computer skills.";
         document.getElementById('newCardQuestions').value = discussionQuestions.join('\n');
 
-        // Store temporary extra data for saving
         window._parsedCardMetadata = {
           originalLetter: originalCardLetter,
           part1Questions: part1Questions,
           warmupQuestions: warmupQuestions
         };
 
-        // Notice to user explaining the key assignment
         const noticeEl = document.getElementById('newCardNotice');
         if (noticeEl) {
           if (targetCardKey !== originalCardLetter) {
@@ -2963,7 +2944,6 @@ function doPost(e) {
           }
         }
 
-        // Display feedback banner
         const fbBanner = document.getElementById('pdfExtractionFeedback');
         const fbMsg = document.getElementById('pdfExtractionMsg');
         if (fbBanner && fbMsg) {
@@ -2994,7 +2974,6 @@ function doPost(e) {
 
       const meta = window._parsedCardMetadata || {};
 
-      // Save or add as a new card
       CARDS[key] = {
         title: title,
         opt1: opt1,
@@ -3015,13 +2994,11 @@ function doPost(e) {
         discussionQuestions: questions
       };
 
-      // Persist custom cards to localStorage so they survive page reloads
       try {
         const savedCustomCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
         savedCustomCards[key] = CARDS[key];
         localStorage.setItem('igcse_custom_cards', JSON.stringify(savedCustomCards));
 
-        // Clear from deleted keys if previously deleted
         const deletedKeys = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
         const updatedDeleted = deletedKeys.filter(k => k !== key);
         localStorage.setItem('igcse_deleted_cards', JSON.stringify(updatedDeleted));
@@ -3029,22 +3006,18 @@ function doPost(e) {
         console.warn("Could not save card to localStorage:", err);
       }
 
-      // Re-render UI dropdowns and admin list
       renderCardsDropdown();
       renderActiveCardsInAdmin();
 
-      // Automatically select newly created card
       const cardSelect = document.getElementById('cardSelect');
       if (cardSelect) {
         cardSelect.value = key;
         onCardSelectionChange(key);
       }
 
-      // Hide extraction banner
       const fbBanner = document.getElementById('pdfExtractionFeedback');
       if (fbBanner) fbBanner.classList.add('hidden');
 
-      // Clear input fields for next card
       document.getElementById('newCardKey').value = getNextAvailableCardKey();
       document.getElementById('newCardTitle').value = '';
       document.getElementById('newCardOpt1').value = '';
@@ -3052,7 +3025,6 @@ function doPost(e) {
       document.getElementById('newCardQuestions').value = '';
       window._parsedCardMetadata = null;
 
-      // Automatically sync new card to Google Sheet cloud
       saveCardToGoogleSheet(key, CARDS[key]);
       showToast(`Speaking Card ${key} created and syncing to Google Sheet!`);
     }
@@ -3174,14 +3146,12 @@ function doPost(e) {
       delete CARDS[key];
 
       try {
-        // Remove from custom cards in localStorage
         const customCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
         if (customCards[key]) {
           delete customCards[key];
           localStorage.setItem('igcse_custom_cards', JSON.stringify(customCards));
         }
 
-        // Track in deleted keys list so default cards don't reappear on reload
         const deletedKeys = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
         if (!deletedKeys.includes(key)) {
           deletedKeys.push(key);
@@ -3191,7 +3161,6 @@ function doPost(e) {
         console.warn("Storage error on delete:", e);
       }
 
-      // If active card was deleted, fall back to another existing card
       const remainingKeys = Object.keys(CARDS);
       if (state.activeCardKey === key) {
         state.activeCardKey = remainingKeys[0] || '';
@@ -3200,7 +3169,6 @@ function doPost(e) {
         }
       }
 
-      // Delete from Google Sheet cloud
       deleteCardFromGoogleSheet(key);
 
       renderCardsDropdown();
@@ -3225,7 +3193,6 @@ function doPost(e) {
 
       try {
         showToast("Pushing candidate roster to Google Sheet...");
-        // text/plain prevents CORS preflight failure on Google Apps Script
         await fetch(state.googleWebAppUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -3255,56 +3222,72 @@ function doPost(e) {
       }, duration);
     }
 
-    function startNewCandidateSession() {
-      if (state.isRecording) stopMasterRecording();
+    function promptNextCandidateSession() {
+      const modal = document.getElementById('resetCandidateModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeResetCandidateModal() {
+      const modal = document.getElementById('resetCandidateModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function executeFullAppReset() {
+      closeResetCandidateModal();
 
       const candNoInput = document.getElementById('candNumber');
-      const curr = parseInt(candNoInput.value, 10);
+      const curr = parseInt(candNoInput ? candNoInput.value : '', 10);
+      let nextCandNo = "0001";
       if (!isNaN(curr)) {
-        candNoInput.value = (curr + 1).toString().padStart(4, '0');
+        nextCandNo = (curr + 1).toString().padStart(4, '0');
       }
-      document.getElementById('candName').value = '';
 
-      state.totalSeconds = 0;
-      state.totalTimerStarted = false;
-      if (state.totalTimerInterval) clearInterval(state.totalTimerInterval);
+      try {
+        localStorage.setItem('igcse_next_cand_number', nextCandNo);
+      } catch (e) {
+        console.warn("Storage write error:", e);
+      }
 
-      state.sectionRemaining = { ...state.sectionDefaultDurations };
-      state.timeUpTriggered = { 1: false, 2: false, 3: false, 4: false, 5: false };
-      if (state.sectionInterval) clearInterval(state.sectionInterval);
+      try {
+        if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+          state.mediaRecorder.stop();
+        }
+      } catch (e) {}
 
-      state.cardPrepSeconds = 60;
-      state.cardTalkSeconds = 120;
-      state.audioChunks = [];
-      state.generatedMp3Blob = null;
+      try {
+        if (state.audioStream) {
+          state.audioStream.getTracks().forEach(t => t.stop());
+        }
+      } catch (e) {}
 
-      document.getElementById('totalTimerDisplay').textContent = "00:00";
-      document.getElementById('sectionTimerDisplay').textContent = "01:00";
-      document.getElementById('cardPrepTimerDisplay').textContent = "01:00";
-      document.getElementById('cardTalkTimerDisplay').textContent = "02:00";
-      document.getElementById('audioPlaybackSection').classList.add('hidden');
-      document.getElementById('encodingProgressWrapper').classList.add('hidden');
-
-      updateAnnouncementScript();
-      goToStep(0);
-      showToast("Ready for next candidate.");
+      location.reload();
     }
 
     // Window Load Initialization
     window.addEventListener('DOMContentLoaded', async () => {
-      // Set pdf.js worker URL to prevent console worker initialization warnings
       if (window.pdfjsLib) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       }
 
-      // Load any persisted custom speaking cards from localStorage
+      // Check for auto-incremented candidate number from previous session reset
+      try {
+        const nextCand = localStorage.getItem('igcse_next_cand_number');
+        if (nextCand) {
+          const candInput = document.getElementById('candNumber');
+          if (candInput) candInput.value = nextCand;
+          localStorage.removeItem('igcse_next_cand_number');
+        }
+      } catch (e) {
+        console.warn("Storage read error:", e);
+      }
+
+      // Load custom speaking cards from localStorage
       try {
         const storedCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
         Object.keys(storedCards).forEach(key => {
           CARDS[key] = storedCards[key];
         });
 
-        // Apply persistent card deletions
         const deletedCards = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
         deletedCards.forEach(key => {
           delete CARDS[key];
