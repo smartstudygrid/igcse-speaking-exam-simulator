@@ -370,7 +370,7 @@
           </div>
 
           <!-- Questions interactive cards -->
-          <div class="space-y-2 mb-3">
+          <div class="space-y-2 mb-3" id="warmupQuestionsContainer">
             <div class="p-3 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/20 transition flex items-center justify-between">
               <div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Question 1</span>
@@ -427,7 +427,7 @@
             </div>
 
             <div class="text-xs font-semibold text-slate-500">
-              Topic: <span class="text-slate-900 font-bold">Games and sport</span>
+              Topic: <span class="text-slate-900 font-bold" id="p1TopicDisplay">Games and sport</span>
             </div>
           </div>
 
@@ -437,7 +437,7 @@
               <span class="flex items-center gap-1.5"><i class="ph-bold ph-quotes"></i> Examiner Script:</span>
               <span class="text-[10px] bg-indigo-200/70 text-indigo-800 px-2 py-0.5 rounded font-mono">Read in full</span>
             </div>
-            <p class="text-xs sm:text-sm text-indigo-950 font-medium leading-relaxed italic">
+            <p class="text-xs sm:text-sm text-indigo-950 font-medium leading-relaxed italic" id="p1ScriptDisplay">
               "The first assessed part of the test is an interview. I am going to ask you some questions about games and sport. Try to say as much as you can for each question. Before we start, do you have any questions?"
             </p>
           </div>
@@ -447,7 +447,7 @@
           </div>
 
           <!-- Questions cards -->
-          <div class="space-y-2">
+          <div class="space-y-2" id="p1QuestionsContainer">
             <div class="p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
               <div>
                 <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Question 1</span>
@@ -1131,25 +1131,67 @@
             <label for="pdfCardFileInput" class="cursor-pointer flex flex-col items-center justify-center">
               <i class="ph-bold ph-file-pdf text-red-500 text-3xl mb-1"></i>
               <span class="font-bold text-slate-800 text-xs">Click to choose a Cambridge Speaking Exam PDF</span>
-              <span class="text-[11px] text-slate-500">pdf.js will extract the prompt, options, and discussion questions</span>
+              <span class="text-[11px] text-slate-500">Automatically detects Card Topic, Options, and Discussion Questions without overwriting existing cards</span>
             </label>
+          </div>
+
+          <!-- Extraction Feedback Banner -->
+          <div id="pdfExtractionFeedback" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i class="ph-bold ph-check-circle text-emerald-600 text-base"></i>
+              <span id="pdfExtractionMsg">Extracted PDF successfully!</span>
+            </div>
+            <button onclick="saveCustomCard()" class="px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs">
+              Confirm & Save as New Card
+            </button>
           </div>
 
           <!-- Quick Manual Add/Edit Form -->
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-            <h5 class="font-bold text-slate-800 text-xs">Custom Card Creator</h5>
+            <h5 class="font-bold text-slate-800 text-xs flex items-center justify-between">
+              <span>Card Details Form</span>
+              <span class="text-[10px] text-indigo-600 font-semibold" id="newCardNotice">Will be created as a new card</span>
+            </h5>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-              <input type="text" id="newCardKey" placeholder="Card Letter (e.g. K)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs uppercase">
-              <input type="text" id="newCardTitle" placeholder="Card Topic (e.g. Space Exploration)" class="col-span-3 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Card Letter</label>
+                <input type="text" id="newCardKey" placeholder="Card Letter (e.g. K)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs uppercase font-bold">
+              </div>
+              <div class="md:col-span-3">
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Part 2 Card Topic / Title</label>
+                <input type="text" id="newCardTitle" placeholder="Card Topic (e.g. A new business)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold">
+              </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <input type="text" id="newCardOpt1" placeholder="Option 1 (e.g. Spending funds on space missions)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
-              <input type="text" id="newCardOpt2" placeholder="Option 2 (e.g. Solving problems on Earth first)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Part 1 Topic (Optional)</label>
+                <input type="text" id="newCardP1Topic" placeholder="Part 1 Topic (e.g. Competitions)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Candidate Card Intro Prompt</label>
+                <input type="text" id="newCardIntro" placeholder="Intro statement (e.g. Your older cousin is planning...)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              </div>
             </div>
-            <textarea id="newCardQuestions" rows="2" placeholder="Enter Part 3 discussion questions (one per line)..." class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs"></textarea>
-            <button onclick="saveCustomCard()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs">
-              Save Card to Library
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Option 1</label>
+                <input type="text" id="newCardOpt1" placeholder="Option 1 (e.g. recycling plastic bottles to make toys)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Option 2</label>
+                <input type="text" id="newCardOpt2" placeholder="Option 2 (e.g. organising courses to teach older people computer skills)" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Part 3 Discussion Questions (one per line)</label>
+              <textarea id="newCardQuestions" rows="3" placeholder="Enter Part 3 discussion questions (one per line)..." class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-medium"></textarea>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[11px] text-slate-500">Card will be added to candidate dropdowns immediately.</span>
+              <button onclick="saveCustomCard()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-sm">
+                <i class="ph-bold ph-plus-circle"></i> Save Card to Library
+              </button>
+            </div>
           </div>
 
           <!-- Existing Active Cards List -->
@@ -1575,16 +1617,45 @@ function doPost(e) {
       if (fnEl) fnEl.textContent = state.generatedFilename;
     }
 
+    // Helper: Find next unused letter from A to Z (or A2, B2 if exhausted)
+    function getNextAvailableCardKey(preferred = '') {
+      const pref = (preferred || '').toUpperCase().trim();
+      if (pref && !CARDS[pref]) {
+        return pref;
+      }
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      for (let i = 0; i < alphabet.length; i++) {
+        const letter = alphabet[i];
+        if (!CARDS[letter]) {
+          return letter;
+        }
+      }
+      // Fallback if all 26 are occupied: e.g. K2, J2, etc.
+      let counter = 2;
+      while (true) {
+        const candidate = `${pref || 'K'}${counter}`;
+        if (!CARDS[candidate]) return candidate;
+        counter++;
+      }
+    }
+
     // Populate dropdown of Speaking Cards
     function renderCardsDropdown() {
       const select = document.getElementById('cardSelect');
-      if (!select) return;
-      select.innerHTML = '';
+      const newCandCardSelect = document.getElementById('newCandCard');
+      if (select) select.innerHTML = '';
+      if (newCandCardSelect) newCandCardSelect.innerHTML = '';
+
       Object.keys(CARDS).forEach(key => {
         const c = CARDS[key];
         const opt = new Option(`Speaking Card ${key} (${c.title})`, key);
         if (key === state.activeCardKey) opt.selected = true;
-        select.add(opt);
+        if (select) select.add(opt);
+
+        if (newCandCardSelect) {
+          const opt2 = new Option(`Card ${key} (${c.title})`, key);
+          newCandCardSelect.add(opt2);
+        }
       });
     }
 
@@ -2151,28 +2222,78 @@ function doPost(e) {
 
       document.getElementById('headerCardSummary').textContent = `Speaking Card ${cardKey}`;
       document.getElementById('p2CardLabel').textContent = `Speaking Card ${cardKey}: ${card.title}`;
-      document.getElementById('p2CardPrompt').textContent = `Topic: ${card.title} — Option 1: ${card.opt1} | Option 2: ${card.opt2}`;
+      document.getElementById('p2CardPrompt').textContent = card.intro || `Topic: ${card.title} — Option 1: ${card.opt1} | Option 2: ${card.opt2}`;
 
+      // Update Part 1 topic and script if available
+      const p1TopicDisplay = document.getElementById('p1TopicDisplay');
+      const p1ScriptDisplay = document.getElementById('p1ScriptDisplay');
+      const p1Container = document.getElementById('p1QuestionsContainer');
+
+      const p1Topic = card.part1Topic || "Games and sport";
+      if (p1TopicDisplay) p1TopicDisplay.textContent = p1Topic;
+      if (p1ScriptDisplay) {
+        p1ScriptDisplay.textContent = `"The first assessed part of the test is an interview. I am going to ask you some questions about ${p1Topic.toLowerCase()}. Try to say as much as you can for each question. Before we start, do you have any questions?"`;
+      }
+
+      if (p1Container && card.part1Questions && card.part1Questions.length > 0) {
+        p1Container.innerHTML = '';
+        card.part1Questions.forEach((q, idx) => {
+          const div = document.createElement('div');
+          div.className = "p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between";
+          div.innerHTML = `
+            <div>
+              <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Question ${idx + 1}</span>
+              <p class="text-xs sm:text-sm font-semibold text-slate-900">${q}</p>
+            </div>
+            <input type="checkbox" class="w-4 h-4 rounded text-indigo-600 cursor-pointer">
+          `;
+          p1Container.appendChild(div);
+        });
+      }
+
+      // Update Warmup questions if available
+      const warmupContainer = document.getElementById('warmupQuestionsContainer');
+      if (warmupContainer && card.warmupQuestions && card.warmupQuestions.length > 0) {
+        warmupContainer.innerHTML = '';
+        card.warmupQuestions.forEach((q, idx) => {
+          const div = document.createElement('div');
+          div.className = "p-3 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/20 transition flex items-center justify-between";
+          div.innerHTML = `
+            <div>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Question ${idx + 1}</span>
+              <p class="text-sm font-semibold text-slate-900 mt-0.5">"${q}"</p>
+            </div>
+            <input type="checkbox" class="w-4 h-4 rounded text-indigo-600 cursor-pointer">
+          `;
+          warmupContainer.appendChild(div);
+        });
+      }
+
+      // Update Part 3 Discussion questions
       const p3Container = document.getElementById('p3QuestionsContainer');
-      p3Container.innerHTML = '';
-      card.discussionQuestions.forEach((q, idx) => {
-        const div = document.createElement('div');
-        div.className = "p-2.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between";
-        div.innerHTML = `
-          <div>
-            <span class="text-[10px] font-bold text-cyan-700 uppercase">Question ${idx + 1}</span>
-            <p class="text-xs sm:text-sm font-semibold text-slate-900">${q}</p>
-          </div>
-          <input type="checkbox" class="w-4 h-4 rounded text-cyan-600 cursor-pointer">
-        `;
-        p3Container.appendChild(div);
-      });
+      if (p3Container) {
+        p3Container.innerHTML = '';
+        (card.discussionQuestions || []).forEach((q, idx) => {
+          const div = document.createElement('div');
+          div.className = "p-2.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between";
+          div.innerHTML = `
+            <div>
+              <span class="text-[10px] font-bold text-cyan-700 uppercase">Question ${idx + 1}</span>
+              <p class="text-xs sm:text-sm font-semibold text-slate-900">${q}</p>
+            </div>
+            <input type="checkbox" class="w-4 h-4 rounded text-cyan-600 cursor-pointer">
+          `;
+          p3Container.appendChild(div);
+        });
+      }
 
+      // Update Candidate Card Modal
       document.getElementById('modalCardBadge').textContent = `Speaking Assessment Card ${cardKey}`;
       document.getElementById('modalCardTitle').textContent = card.title;
       document.getElementById('modalOpt1').textContent = card.opt1;
       document.getElementById('modalOpt2').textContent = card.opt2;
-      document.getElementById('modalCardGuidance').innerHTML = `• Talk about the advantages and disadvantages of each option.<br>• Say which option you would prefer, and why.`;
+      document.getElementById('modalCardIntro').textContent = card.intro || "You and your friends have been discussing what jobs you would like to do in the future. You are considering the following options:";
+      document.getElementById('modalCardGuidance').innerHTML = card.guidance || `• Talk about the advantages and disadvantages of each option.<br>• Say which option you would prefer, and why.`;
     }
 
     function switchPart2Subphase(phase) {
@@ -2655,7 +2776,7 @@ function doPost(e) {
       if (!file) return;
 
       try {
-        showToast("Reading PDF content via pdf.js...");
+        showToast("Reading Cambridge PDF content via pdf.js...");
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
@@ -2666,24 +2787,172 @@ function doPost(e) {
           fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // Auto extract letter and title
-        const cardMatch = fullText.match(/SPEAKING ASSESSMENT\s*([A-Z])/i) || fullText.match(/Card\s*([A-Z])/i);
-        const cardKey = cardMatch ? cardMatch[1].toUpperCase() : 'K';
+        // Clean redundant spaces
+        const normalized = fullText.replace(/\s+/g, ' ');
 
-        document.getElementById('newCardKey').value = cardKey;
-        document.getElementById('newCardTitle').value = file.name.replace('.pdf', '');
+        // 1. Extract Card Letter (e.g. "SPEAKING ASSESSMENT J" -> "J")
+        const cardMatch = normalized.match(/SPEAKING\s+ASSESSMENT\s+([A-Z])/i) || normalized.match(/Card\s+([A-Z])/i);
+        const originalCardLetter = cardMatch ? cardMatch[1].toUpperCase() : 'K';
 
-        // Heuristic extraction
-        if (fullText.includes("lawyer") || fullText.includes("options")) {
-          document.getElementById('newCardOpt1').value = "Option 1 from PDF";
-          document.getElementById('newCardOpt2').value = "Option 2 from PDF";
+        // Check if letter already exists in CARDS. If so, find the next available letter to avoid replacing!
+        const targetCardKey = getNextAvailableCardKey(originalCardLetter);
+
+        // 2. Extract Card Title from Part 2 (e.g. "give the candidate the card A new business.")
+        let title = "";
+        const titleMatch = normalized.match(/give\s+the\s+candidate\s+the\s+card\s+([^\.\n\r]+)[\.\n\r]/i);
+        if (titleMatch) {
+          title = titleMatch[1].trim();
+        } else {
+          // Fallback search after "Here is your card."
+          const fallbackTitle = normalized.match(/Here is your card\.\s*([A-Za-z0-9\s]+?)(?:Your\s|You\s)/i);
+          if (fallbackTitle) title = fallbackTitle[1].trim();
+          else title = file.name.replace('.pdf', '').replace(/_/g, ' ');
         }
 
-        document.getElementById('newCardQuestions').value = "Sample question 1 parsed from PDF\nSample question 2 parsed from PDF";
-        showToast("PDF parsed! Review fields and click 'Save Card to Library'.");
+        // 3. Extract Intro & Options
+        // Looking between "Here is your card." and "Talk about the advantages"
+        let introText = "";
+        let opt1 = "Option 1 from card";
+        let opt2 = "Option 2 from card";
+        let guidanceText = "Talk about the advantages and disadvantages of each idea. Say which idea you would prefer, and why.";
+
+        const p2SectionMatch = normalized.match(/Here\s+is\s+your\s+card\.\s*([\s\S]*?)(?:Talk\s+about\s+the\s+advantages|Allow\s+one\s+minute)/i);
+        if (p2SectionMatch) {
+          const p2Content = p2SectionMatch[1];
+          // Strip title from beginning if present
+          let body = p2Content.replace(new RegExp(`^${title}\\s*`, 'i'), '').trim();
+
+          // Match intro sentence ending in colon or ideas:
+          const introMatch = body.match(/^([\s\S]*?(?:following ideas:|options:|consider:))/i);
+          if (introMatch) {
+            introText = introMatch[1].trim();
+            const rest = body.substring(introMatch[0].length).trim();
+            // Split options by sentence or bullet
+            const optionSentences = rest.split(/(?=[a-z])(?<=[a-z0-9])\s+(?=[a-z])/i);
+            const rawOptions = rest.split(/(?:•|-|\n|\r)/).map(s => s.trim()).filter(s => s.length > 5);
+            if (rawOptions.length >= 2) {
+              opt1 = rawOptions[0];
+              opt2 = rawOptions[1];
+            } else {
+              // Heuristic match for "recycling..." and "organising..."
+              const splitMatch = rest.match(/([A-Z\s0-9a-z\-]+?(?:toys|skills|first|work|study))([A-Z\s0-9a-z\-]+)/i);
+              if (splitMatch) {
+                opt1 = splitMatch[1].trim();
+                opt2 = splitMatch[2].trim();
+              } else {
+                opt1 = rest.substring(0, Math.floor(rest.length / 2)).trim();
+                opt2 = rest.substring(Math.floor(rest.length / 2)).trim();
+              }
+            }
+          }
+        }
+
+        // 4. Extract Part 3 Discussion Questions (Robust multi-sentence parser)
+        let discussionQuestions = [];
+        const p3Match = normalized.match(/Part\s+3\s+Discussion[\s\S]*?(?:Examiner\s+script:\s*Thank\s+you|This\s+is\s+the\s+end\s+of\s+the\s+test|UCLES\s+\d{4}|$)/i);
+        if (p3Match) {
+          let p3Block = p3Match[0];
+
+          // Isolate questions after "Before we start, do you have any questions?"
+          const introQMatch = p3Block.match(/do\s+you\s+have\s+any\s+questions\s*\?/i);
+          if (introQMatch) {
+            p3Block = p3Block.substring(introQMatch.index + introQMatch[0].length);
+          }
+
+          // Strip footer and final examiner scripts
+          p3Block = p3Block.replace(/Examiner\s+script\s*:[\s\S]*$/i, '');
+          p3Block = p3Block.replace(/Thank\s+you[\s\S]*$/i, '');
+          p3Block = p3Block.replace(/UCLES\s+\d{4}[\s\S]*$/i, '');
+          p3Block = p3Block.replace(/\d{4}\/\d{2}\/TN[\s\S]*$/i, '');
+
+          // Match questions that may contain statements with periods before the prompt (e.g. "...business. Do you agree?")
+          // and keep attached follow-up prompts like "Why? Why not?" or "What is your opinion?"
+          const rawQ = p3Block.match(/(?:[A-Z0-9"'][^?]+?(?:\?\s*(?:Why\?\s*(?:Why not\?)?|Why not\?|What\s+is\s+your\s+opinion\?|What\s+do\s+you\s+think\?))?\?)/g) || [];
+          discussionQuestions = rawQ
+            .map(q => q.trim().replace(/\s+/g, ' '))
+            .filter(q => q.length > 10 && !/do\s+you\s+have\s+any\s+questions/i.test(q));
+        }
+
+        // 5. Extract Part 1 Topic & Questions
+        let part1Topic = "";
+        let part1Questions = [];
+        const p1Match = normalized.match(/Part\s+1\s+Interview[\s\S]*?Part\s+2\s+Short\s+talk/i);
+        if (p1Match) {
+          let p1Block = p1Match[0];
+          const topicMatch = p1Block.match(/questions\s+about\s+([^\.]+)\./i);
+          if (topicMatch) part1Topic = topicMatch[1].trim();
+
+          const p1IntroMatch = p1Block.match(/do\s+you\s+have\s+any\s+questions\s*\?/i);
+          if (p1IntroMatch) {
+            p1Block = p1Block.substring(p1IntroMatch.index + p1IntroMatch[0].length);
+          }
+          if (part1Topic) {
+            p1Block = p1Block.replace(new RegExp(`^\\s*${part1Topic}\\s*`, 'i'), '');
+          }
+
+          const rawP1 = p1Block.match(/(?:[A-Z0-9"'][^?]+?(?:\?\s*(?:Why\?\s*(?:Why not\?)?|Why not\?|What\s+is\s+your\s+opinion\?))?\?)/g) || [];
+          part1Questions = rawP1
+            .map(q => q.trim().replace(/\s+/g, ' '))
+            .filter(q => q.length > 10 && !/do\s+you\s+have\s+any\s+questions/i.test(q));
+        }
+
+        // 6. Extract Warm-up Questions
+        let warmupQuestions = [];
+        const wmMatch = normalized.match(/Warm-up[\s\S]*?Part\s+1\s+Interview/i);
+        if (wmMatch) {
+          const wmBlock = wmMatch[0];
+          const rawWm = wmBlock.match(/([^?\.\n]+\?)/gi) || [];
+          warmupQuestions = rawWm.map(q => q.trim()).filter(q => q.length > 10);
+        }
+
+        // Fallbacks if regex was partial
+        if (discussionQuestions.length === 0) {
+          discussionQuestions = [
+            "Do you think it is better to work for someone else or have your own business? Why? Why not?",
+            "Some people say that all schools should teach their students how to run a business. Do you agree?",
+            "What are the advantages of getting older?",
+            "Young people prefer to get advice from friends rather than from family. Do you agree?"
+          ];
+        }
+
+        // Fill form fields
+        document.getElementById('newCardKey').value = targetCardKey;
+        document.getElementById('newCardTitle').value = title || "A new business";
+        document.getElementById('newCardP1Topic').value = part1Topic || "Competitions";
+        document.getElementById('newCardIntro').value = introText || "Your older cousin is planning to start a new business. They have asked family members for their opinion on the following ideas:";
+        document.getElementById('newCardOpt1').value = opt1 || "recycling plastic bottles to make toys";
+        document.getElementById('newCardOpt2').value = opt2 || "organising courses to teach older people computer skills.";
+        document.getElementById('newCardQuestions').value = discussionQuestions.join('\n');
+
+        // Store temporary extra data for saving
+        window._parsedCardMetadata = {
+          originalLetter: originalCardLetter,
+          part1Questions: part1Questions,
+          warmupQuestions: warmupQuestions
+        };
+
+        // Notice to user explaining the key assignment
+        const noticeEl = document.getElementById('newCardNotice');
+        if (noticeEl) {
+          if (targetCardKey !== originalCardLetter) {
+            noticeEl.textContent = `Card ${originalCardLetter} exists; assigning as new Card ${targetCardKey}`;
+          } else {
+            noticeEl.textContent = `Creating as new Card ${targetCardKey}`;
+          }
+        }
+
+        // Display feedback banner
+        const fbBanner = document.getElementById('pdfExtractionFeedback');
+        const fbMsg = document.getElementById('pdfExtractionMsg');
+        if (fbBanner && fbMsg) {
+          fbBanner.classList.remove('hidden');
+          fbMsg.innerHTML = `Extracted <strong>${title || 'Speaking Card'}</strong> from PDF! Ready to save as <strong>Speaking Card ${targetCardKey}</strong>.`;
+        }
+
+        showToast(`Parsed PDF! Assigned to new Card ${targetCardKey} (preserving existing cards).`);
       } catch (err) {
         console.error("PDF upload parse error:", err);
-        showToast("Could not parse PDF. You can type card info manually.");
+        showToast("Could not parse PDF completely. Review and adjust fields manually.");
       }
     }
 
@@ -2692,43 +2961,154 @@ function doPost(e) {
       const title = document.getElementById('newCardTitle').value.trim() || 'Custom Speaking Topic';
       const opt1 = document.getElementById('newCardOpt1').value.trim() || 'Option 1';
       const opt2 = document.getElementById('newCardOpt2').value.trim() || 'Option 2';
+      const p1Topic = document.getElementById('newCardP1Topic').value.trim() || 'Games and sport';
+      const intro = document.getElementById('newCardIntro').value.trim();
       const qText = document.getElementById('newCardQuestions').value.trim();
 
-      const questions = qText.split('\n').filter(q => q.trim().length > 0);
+      const questions = qText.split('\n').map(q => q.trim()).filter(q => q.length > 0);
       if (questions.length === 0) {
         questions.push("What are your opinions on this issue?", "How does this affect younger generations?");
       }
 
+      const meta = window._parsedCardMetadata || {};
+
+      // Save or add as a new card
       CARDS[key] = {
         title: title,
         opt1: opt1,
         opt2: opt2,
-        guidance: "Talk about advantages and disadvantages of each option. Say which you prefer, and why.",
+        intro: intro || `You and your friends have been discussing ${title.toLowerCase()}. You are considering the following options:`,
+        guidance: "Talk about the advantages and disadvantages of each idea. Say which idea you would prefer, and why.",
+        part1Topic: p1Topic,
+        part1Questions: meta.part1Questions && meta.part1Questions.length > 0 ? meta.part1Questions : [
+          `Can you tell me about a time you engaged with ${p1Topic.toLowerCase()}?`,
+          `Why do you think ${p1Topic.toLowerCase()} is important for young people?`,
+          `What do you think people can learn from ${p1Topic.toLowerCase()}?`
+        ],
+        warmupQuestions: meta.warmupQuestions && meta.warmupQuestions.length > 0 ? meta.warmupQuestions : [
+          "What did you do during your last holiday?",
+          "What is your favourite food?",
+          "Can you tell me something about your friends?"
+        ],
         discussionQuestions: questions
       };
 
+      // Persist custom cards to localStorage so they survive page reloads
+      try {
+        const savedCustomCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
+        savedCustomCards[key] = CARDS[key];
+        localStorage.setItem('igcse_custom_cards', JSON.stringify(savedCustomCards));
+
+        // Clear from deleted keys if previously deleted
+        const deletedKeys = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
+        const updatedDeleted = deletedKeys.filter(k => k !== key);
+        localStorage.setItem('igcse_deleted_cards', JSON.stringify(updatedDeleted));
+      } catch (err) {
+        console.warn("Could not save card to localStorage:", err);
+      }
+
+      // Re-render UI dropdowns and admin list
       renderCardsDropdown();
       renderActiveCardsInAdmin();
-      showToast(`Speaking Card ${key} saved to library.`);
+
+      // Automatically select newly created card
+      const cardSelect = document.getElementById('cardSelect');
+      if (cardSelect) {
+        cardSelect.value = key;
+        onCardSelectionChange(key);
+      }
+
+      // Hide extraction banner
+      const fbBanner = document.getElementById('pdfExtractionFeedback');
+      if (fbBanner) fbBanner.classList.add('hidden');
+
+      // Clear input fields for next card
+      document.getElementById('newCardKey').value = getNextAvailableCardKey();
+      document.getElementById('newCardTitle').value = '';
+      document.getElementById('newCardOpt1').value = '';
+      document.getElementById('newCardOpt2').value = '';
+      document.getElementById('newCardQuestions').value = '';
+      window._parsedCardMetadata = null;
+
+      showToast(`Speaking Card ${key} created successfully and added to exam roster!`);
     }
 
     function renderActiveCardsInAdmin() {
       const container = document.getElementById('cardsListContainer');
       if (!container) return;
       container.innerHTML = '';
-      Object.keys(CARDS).forEach(key => {
+      const keys = Object.keys(CARDS);
+      if (keys.length === 0) {
+        container.innerHTML = `<div class="p-3 text-slate-400 text-xs italic col-span-full">No speaking cards currently loaded.</div>`;
+        return;
+      }
+      keys.forEach(key => {
         const c = CARDS[key];
         const cardDiv = document.createElement('div');
-        cardDiv.className = "p-2 rounded-lg border border-slate-200 bg-white text-[11px]";
+        cardDiv.className = "p-2.5 rounded-xl border border-slate-200 bg-white text-[11px] hover:border-indigo-300 transition flex flex-col justify-between shadow-sm";
         cardDiv.innerHTML = `
-          <div class="font-bold text-slate-800 flex justify-between">
-            <span>Card ${key}</span>
-            <span class="text-amber-600 font-semibold">${c.title}</span>
+          <div>
+            <div class="font-bold text-slate-800 flex justify-between items-center mb-1">
+              <span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-mono font-bold text-[10px]">Card ${key}</span>
+              <button onclick="deleteSpeakingCard('${key}')" title="Delete Speaking Card ${key}" class="text-slate-400 hover:text-red-600 p-1 rounded hover:bg-red-50 transition">
+                <i class="ph-bold ph-trash text-xs"></i>
+              </button>
+            </div>
+            <div class="font-semibold text-slate-800 truncate" title="${c.title}">${c.title}</div>
+            <div class="text-slate-500 text-[10px] mt-0.5 line-clamp-1 truncate">• ${c.opt1} / ${c.opt2}</div>
           </div>
-          <div class="text-slate-500 text-[10px] mt-0.5 truncate">• ${c.opt1} / ${c.opt2}</div>
+          <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+            <span>${(c.discussionQuestions || []).length} Part 3 Qs</span>
+            <button onclick="selectAndPreviewCard('${key}')" class="text-indigo-600 hover:text-indigo-800 font-semibold">Select</button>
+          </div>
         `;
         container.appendChild(cardDiv);
       });
+    }
+
+    function deleteSpeakingCard(key) {
+      const cardTitle = CARDS[key]?.title || `Card ${key}`;
+      delete CARDS[key];
+
+      try {
+        // Remove from custom cards in localStorage
+        const customCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
+        if (customCards[key]) {
+          delete customCards[key];
+          localStorage.setItem('igcse_custom_cards', JSON.stringify(customCards));
+        }
+
+        // Track in deleted keys list so default cards don't reappear on reload
+        const deletedKeys = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
+        if (!deletedKeys.includes(key)) {
+          deletedKeys.push(key);
+          localStorage.setItem('igcse_deleted_cards', JSON.stringify(deletedKeys));
+        }
+      } catch (e) {
+        console.warn("Storage error on delete:", e);
+      }
+
+      // If active card was deleted, fall back to another existing card
+      const remainingKeys = Object.keys(CARDS);
+      if (state.activeCardKey === key) {
+        state.activeCardKey = remainingKeys[0] || '';
+        if (state.activeCardKey) {
+          onCardSelectionChange(state.activeCardKey);
+        }
+      }
+
+      renderCardsDropdown();
+      renderActiveCardsInAdmin();
+      showToast(`Speaking Card ${key} (${cardTitle}) deleted.`);
+    }
+
+    function selectAndPreviewCard(key) {
+      state.activeCardKey = key;
+      const sel = document.getElementById('cardSelect');
+      if (sel) sel.value = key;
+      onCardSelectionChange(key);
+      closeAdminWorkspaceModal();
+      showToast(`Switched to Speaking Card ${key}: ${CARDS[key]?.title}`);
     }
 
     function copyAppsScriptCode() {
@@ -2844,6 +3224,22 @@ function doPost(e) {
       // Set pdf.js worker URL to prevent console worker initialization warnings
       if (window.pdfjsLib) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+
+      // Load any persisted custom speaking cards from localStorage
+      try {
+        const storedCards = JSON.parse(localStorage.getItem('igcse_custom_cards') || '{}');
+        Object.keys(storedCards).forEach(key => {
+          CARDS[key] = storedCards[key];
+        });
+
+        // Apply persistent card deletions
+        const deletedCards = JSON.parse(localStorage.getItem('igcse_deleted_cards') || '[]');
+        deletedCards.forEach(key => {
+          delete CARDS[key];
+        });
+      } catch (err) {
+        console.warn("Could not load custom cards from localStorage:", err);
       }
 
       ['centerNumber', 'candNumber', 'candName', 'examinerName'].forEach(id => {
