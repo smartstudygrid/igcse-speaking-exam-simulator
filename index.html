@@ -172,7 +172,7 @@
       <!-- Mark Scheme Drawer Button -->
       <button onclick="toggleNotesDrawer()" class="px-2.5 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-200 text-xs font-semibold flex items-center gap-1.5 border border-indigo-700/60 transition shadow-sm">
         <i class="ph-bold ph-check-square-offset text-indigo-300"></i>
-        <span>Mark Scheme (<span id="headerTotalScore" class="font-bold text-amber-400 font-mono">29/40</span>)</span>
+        <span>Mark Scheme (<span id="headerTotalScore" class="font-bold text-amber-400 font-mono">0/40</span>)</span>
       </button>
 
       <!-- Admin Panel Button -->
@@ -760,7 +760,7 @@
           <div class="border border-slate-200 rounded-xl overflow-hidden mb-3 bg-white">
             <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 text-[11px] font-bold text-slate-700 uppercase tracking-wider flex justify-between items-center">
               <span>Candidate Dossier & Mark Summary</span>
-              <span class="text-indigo-700 font-mono text-xs">Total Mark: <span id="summaryTotalScore" class="font-bold">29</span> / 40</span>
+              <span class="text-indigo-700 font-mono text-xs">Total Mark: <span id="summaryTotalScore" class="font-bold">0</span> / 40</span>
             </div>
             <div class="p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-2">
               <div>
@@ -948,7 +948,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <span class="font-mono text-sm font-bold bg-indigo-950 text-amber-400 border border-indigo-700/60 px-2 py-0.5 rounded" id="drawerTotalScoreDisplay">29 / 40</span>
+        <span class="font-mono text-sm font-bold bg-indigo-950 text-amber-400 border border-indigo-700/60 px-2 py-0.5 rounded" id="drawerTotalScoreDisplay">0 / 40</span>
         <button onclick="closeNotesDrawer()" class="text-slate-400 hover:text-white p-1">
           <i class="ph-bold ph-x text-base"></i>
         </button>
@@ -961,11 +961,11 @@
       <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60">
         <div class="flex justify-between items-center mb-1">
           <span class="font-bold text-slate-900 text-xs">1. Grammar (Structures)</span>
-          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-grammar">7 / 10</span>
+          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-grammar">0 / 10</span>
         </div>
-        <input type="range" min="0" max="10" value="7" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('grammar', this.value)">
+        <input type="range" min="0" max="10" value="0" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('grammar', this.value)">
         <p class="text-[11px] text-slate-600 leading-tight italic bg-white p-2 rounded-lg border border-slate-200" id="desc-grammar">
-          Level 4 (7-8): A range of simple structures used mostly accurately; complex structures are attempted; errors often occur when attempting to use more complex structures but these do not impede understanding.
+          Level 0 (0): No creditable response.
         </p>
       </div>
 
@@ -973,11 +973,11 @@
       <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60">
         <div class="flex justify-between items-center mb-1">
           <span class="font-bold text-slate-900 text-xs">2. Vocabulary (Range & Precision)</span>
-          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-vocabulary">7 / 10</span>
+          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-vocabulary">0 / 10</span>
         </div>
-        <input type="range" min="0" max="10" value="7" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('vocabulary', this.value)">
+        <input type="range" min="0" max="10" value="0" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('vocabulary', this.value)">
         <p class="text-[11px] text-slate-600 leading-tight italic bg-white p-2 rounded-lg border border-slate-200" id="desc-vocabulary">
-          Level 4 (7-8): A sufficient range of vocabulary used appropriately to discuss a variety of ideas, facts and opinions.
+          Level 0 (0): No creditable response.
         </p>
       </div>
 
@@ -985,11 +985,11 @@
       <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60">
         <div class="flex justify-between items-center mb-1">
           <span class="font-bold text-slate-900 text-xs">3. Development & Communication</span>
-          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-development">8 / 10</span>
+          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-development">0 / 10</span>
         </div>
-        <input type="range" min="0" max="10" value="8" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('development', this.value)">
+        <input type="range" min="0" max="10" value="0" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('development', this.value)">
         <p class="text-[11px] text-slate-600 leading-tight italic bg-white p-2 rounded-lg border border-slate-200" id="desc-development">
-          Level 4 (7-8): Communication is maintained with occasional support; responses are relevant and mostly developed.
+          Level 0 (0): No creditable response.
         </p>
       </div>
 
@@ -997,11 +997,11 @@
       <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60">
         <div class="flex justify-between items-center mb-1">
           <span class="font-bold text-slate-900 text-xs">4. Pronunciation & Intonation</span>
-          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-pronunciation">7 / 10</span>
+          <span class="font-mono font-bold text-indigo-700 text-xs" id="scoreVal-pronunciation">0 / 10</span>
         </div>
-        <input type="range" min="0" max="10" value="7" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('pronunciation', this.value)">
+        <input type="range" min="0" max="10" value="0" class="w-full accent-indigo-600 cursor-pointer mb-1.5" oninput="updateRubricScore('pronunciation', this.value)">
         <p class="text-[11px] text-slate-600 leading-tight italic bg-white p-2 rounded-lg border border-slate-200" id="desc-pronunciation">
-          Level 4 (7-8): Pronunciation is mostly clear; inaccuracies do not impede communication; intonation is sometimes used effectively to convey intended meaning.
+          Level 0 (0): No creditable response.
         </p>
       </div>
 
@@ -1553,10 +1553,10 @@
 
       // Scoring
       scores: {
-        grammar: 7,
-        vocabulary: 7,
-        development: 8,
-        pronunciation: 7
+        grammar: 0,
+        vocabulary: 0,
+        development: 0,
+        pronunciation: 0
       },
 
       // Audio recording
