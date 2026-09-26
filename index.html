@@ -189,44 +189,50 @@
     </div>
   </header>
 
-  <nav class="bg-slate-200/95 border-b border-slate-300 px-3 pt-1.5 flex-shrink-0 relative">
-    <div class="flex items-center gap-1 overflow-x-auto text-xs font-semibold no-scrollbar">
-      <button onclick="goToStep(0)" id="tab-0" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg bg-white text-indigo-700 border-t-2 border-indigo-600 shadow-sm transition">
-        <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px]">0</span>
-        <span>Setup & Hardware</span>
-      </button>
-      <button onclick="goToStep(1)" id="tab-1" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">1</span>
-        <span>Intro & ID (~1m)</span>
-      </button>
-      <button onclick="goToStep(2)" id="tab-2" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">2</span>
-        <span>Warm-up (1-2m)</span>
-      </button>
-      <button onclick="goToStep(3)" id="tab-3" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">3</span>
-        <span>Part 1: Interview (2-3m)</span>
-      </button>
-      <button onclick="goToStep(4)" id="tab-4" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">4</span>
-        <span>Part 2: Short Talk (3-4m)</span>
-      </button>
-      <button onclick="goToStep(5)" id="tab-5" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">5</span>
-        <span>Part 3: Discussion (3-4m)</span>
-      </button>
-      <button onclick="goToStep(6)" id="tab-6" class="tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition">
-        <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">6</span>
-        <span>Export MP3 & PDF Grade</span>
-      </button>
-    </div>
-    <!-- Slim Overall Progress Bar Across Steps 0 to 6 -->
-    <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-300 overflow-hidden">
-      <div id="overallStepProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ease-out" style="width: 0%"></div>
-    </div>
-  </nav>
+  <!-- Main Work Area with Left Sidebar Navigation -->
+  <div class="flex-1 flex overflow-hidden w-full">
+    <!-- Left Sidebar: Step Navigation -->
+    <aside class="w-48 sm:w-56 bg-slate-200/95 border-r border-slate-300 flex-shrink-0 flex flex-col justify-between p-2.5 relative select-none">
+      <div class="space-y-1.5 overflow-y-auto">
+        <button onclick="goToStep(0)" id="tab-0" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl bg-white text-indigo-700 font-semibold shadow-sm border border-slate-200/80 transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">0</span>
+          <span class="truncate">Setup & Hardware</span>
+        </button>
+        <button onclick="goToStep(1)" id="tab-1" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
+          <span class="truncate">Intro & ID (~1m)</span>
+        </button>
+        <button onclick="goToStep(2)" id="tab-2" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
+          <span class="truncate">Warm-up (1-2m)</span>
+        </button>
+        <button onclick="goToStep(3)" id="tab-3" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">3</span>
+          <span class="truncate">Part 1: Interview (2-3m)</span>
+        </button>
+        <button onclick="goToStep(4)" id="tab-4" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">4</span>
+          <span class="truncate">Part 2: Short Talk (3-4m)</span>
+        </button>
+        <button onclick="goToStep(5)" id="tab-5" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">5</span>
+          <span class="truncate">Part 3: Discussion (3-4m)</span>
+        </button>
+        <button onclick="goToStep(6)" id="tab-6" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs">
+          <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">6</span>
+          <span class="truncate">Export MP3 & PDF Grade</span>
+        </button>
+      </div>
 
-  <main class="flex-1 overflow-hidden p-3 sm:p-4 flex flex-col justify-between max-w-7xl w-full mx-auto">
+      <!-- Slim Overall Progress Bar at Bottom of Sidebar -->
+      <div class="pt-2">
+        <div class="h-[3px] bg-slate-300 rounded-full overflow-hidden w-full">
+          <div id="overallStepProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ease-out" style="width: 0%"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 overflow-hidden p-3 sm:p-4 flex flex-col justify-between max-w-7xl w-full mx-auto">
 
     <!-- STEP 0: Setup, Candidate Information & Microphone Source -->
     <div id="step-0" class="step-panel h-full flex flex-col justify-between bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm overflow-y-auto">
@@ -821,7 +827,8 @@
       </div>
     </div>
 
-  </main>
+    </main>
+  </div>
 
   <footer class="bg-slate-900 border-t border-slate-800 px-4 py-1.5 flex items-center justify-between text-[11px] text-slate-400 flex-shrink-0 z-30 shadow-inner select-text">
     <div class="flex items-center gap-2">
@@ -1903,11 +1910,11 @@
         }
         if (tab) {
           if (i === stepIndex) {
-            tab.className = "tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg bg-white text-indigo-700 border-t-2 border-indigo-600 shadow-sm transition";
-            tab.querySelector('span:first-child').className = "w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px]";
+            tab.className = "tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl bg-white text-indigo-700 font-semibold shadow-sm border border-slate-200/80 transition text-left text-xs";
+            tab.querySelector('span:first-child').className = "w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0";
           } else {
-            tab.className = "tab-btn flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-slate-600 hover:bg-white/60 transition";
-            tab.querySelector('span:first-child').className = "w-4 h-4 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]";
+            tab.className = "tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-slate-600 hover:bg-white/60 font-medium transition text-left text-xs";
+            tab.querySelector('span:first-child').className = "w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0";
           }
         }
       }
