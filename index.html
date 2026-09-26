@@ -127,40 +127,6 @@
       </div>
     </div>
 
-    <!-- Center: Timers & Recording Status Cluster -->
-    <div class="flex items-center gap-2 sm:gap-3 bg-slate-800/95 rounded-xl px-3 py-1 border border-slate-700 shadow-inner">
-      <!-- Total Elapsed Timer -->
-      <div class="flex items-center gap-1.5">
-        <i class="ph-bold ph-clock text-amber-400 text-xs"></i>
-        <div class="text-[10px] font-semibold uppercase text-slate-400 tracking-wider">Total:</div>
-        <div class="font-mono text-sm font-bold text-amber-300 min-w-[44px]" id="totalTimerDisplay">00:00</div>
-      </div>
-
-      <div class="h-4 w-px bg-slate-700"></div>
-
-      <!-- Section COUNTDOWN Timer with Mini Progress Bar -->
-      <div class="flex items-center gap-1.5">
-        <i class="ph-bold ph-hourglass-high text-indigo-400 text-xs"></i>
-        <div class="text-[10px] font-semibold uppercase text-slate-400 tracking-wider" id="activeSectionLabel">Intro Left:</div>
-        <div class="font-mono text-sm font-bold text-indigo-300 min-w-[44px]" id="sectionTimerDisplay">01:00</div>
-        <!-- Mini Section Progress Bar -->
-        <div class="w-10 bg-slate-950/80 rounded-full h-1.5 overflow-hidden border border-slate-700/60 hidden sm:block">
-          <div id="sectionTimerMiniBar" class="bg-indigo-400 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
-        </div>
-      </div>
-
-      <div class="h-4 w-px bg-slate-700"></div>
-
-      <!-- High-Visibility Recording Status Pill Badge & VU Meter -->
-      <div class="flex items-center gap-2">
-        <div id="recStatusBadge" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-700/60 border border-slate-600 text-slate-300 text-[10px] font-bold tracking-wider uppercase transition-colors">
-          <span class="w-2 h-2 rounded-full bg-slate-400" id="recDot"></span>
-          <span id="recStatusText">STANDBY</span>
-        </div>
-        <canvas id="vuMeter" width="42" height="12" class="rounded bg-slate-950 border border-slate-700/80"></canvas>
-      </div>
-    </div>
-
     <!-- Right Controls: Candidate Card, Mark Scheme, Admin, Full Screen -->
     <div class="flex items-center gap-2">
       <!-- Candidate Card Button -->
@@ -191,8 +157,8 @@
 
   <!-- Main Work Area with Left Sidebar Navigation -->
   <div class="flex-1 flex overflow-hidden w-full">
-    <!-- Left Sidebar: Step Navigation -->
-    <aside class="w-48 sm:w-56 bg-slate-200/95 border-r border-slate-300 flex-shrink-0 flex flex-col justify-between p-2.5 relative select-none">
+    <!-- Left Sidebar: Step Navigation & Timer Monitor -->
+    <aside class="w-52 sm:w-60 bg-slate-200/95 border-r border-slate-300 flex-shrink-0 flex flex-col justify-between p-2.5 relative select-none">
       <div class="space-y-1.5 overflow-y-auto">
         <button onclick="goToStep(0)" id="tab-0" class="tab-btn w-full flex items-center gap-2 px-2.5 py-2 rounded-xl bg-white text-indigo-700 font-semibold shadow-sm border border-slate-200/80 transition text-left text-xs">
           <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold flex-shrink-0">0</span>
@@ -224,10 +190,46 @@
         </button>
       </div>
 
-      <!-- Slim Overall Progress Bar at Bottom of Sidebar -->
-      <div class="pt-2">
-        <div class="h-[3px] bg-slate-300 rounded-full overflow-hidden w-full">
-          <div id="overallStepProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ease-out" style="width: 0%"></div>
+      <!-- Timers & Recording Monitor Rows (Relocated to Sidebar) -->
+      <div class="space-y-2 pt-2 border-t border-slate-300/80">
+        <!-- Row 1: Total Elapsed Timer -->
+        <div class="bg-slate-900 text-white rounded-xl px-3 py-2 flex items-center justify-between border border-slate-800 shadow-sm">
+          <div class="flex items-center gap-1.5 text-slate-400 text-xs">
+            <i class="ph-bold ph-clock text-amber-400"></i>
+            <span class="text-[10px] font-bold uppercase tracking-wider">Total</span>
+          </div>
+          <div class="font-mono text-[17px] font-bold text-amber-300" id="totalTimerDisplay">00:00</div>
+        </div>
+
+        <!-- Row 2: Section Countdown Timer -->
+        <div class="bg-slate-900 text-white rounded-xl px-3 py-2 border border-slate-800 shadow-sm space-y-1.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 text-slate-400 text-xs truncate">
+              <i class="ph-bold ph-hourglass-high text-indigo-400"></i>
+              <span class="text-[10px] font-bold uppercase tracking-wider truncate" id="activeSectionLabel">Intro Left:</span>
+            </div>
+            <div class="font-mono text-[17px] font-bold text-indigo-300" id="sectionTimerDisplay">01:00</div>
+          </div>
+          <!-- Mini Section Progress Bar -->
+          <div class="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
+            <div id="sectionTimerMiniBar" class="bg-indigo-400 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: Recording Status & VU Meter -->
+        <div class="bg-slate-900 text-white rounded-xl px-3 py-2 flex items-center justify-between border border-slate-800 shadow-sm">
+          <div id="recStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-[10px] font-bold tracking-wider uppercase transition-colors">
+            <span class="w-2 h-2 rounded-full bg-slate-400" id="recDot"></span>
+            <span id="recStatusText">STANDBY</span>
+          </div>
+          <canvas id="vuMeter" width="48" height="14" class="rounded bg-slate-950 border border-slate-700/80"></canvas>
+        </div>
+
+        <!-- Slim Overall Step Progress Bar -->
+        <div class="pt-1">
+          <div class="h-[3px] bg-slate-300 rounded-full overflow-hidden w-full">
+            <div id="overallStepProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 transition-all duration-300 ease-out" style="width: 0%"></div>
+          </div>
         </div>
       </div>
     </aside>
@@ -1939,9 +1941,9 @@
       if (displayEl) {
         displayEl.textContent = formatTime(remaining);
         if (remaining <= 15 && remaining > 0) {
-          displayEl.className = "font-mono text-sm font-bold text-red-400 animate-pulse min-w-[44px]";
+          displayEl.className = "font-mono text-[17px] font-bold text-red-400 animate-pulse min-w-[44px]";
         } else {
-          displayEl.className = "font-mono text-sm font-bold text-indigo-300 min-w-[44px]";
+          displayEl.className = "font-mono text-[17px] font-bold text-indigo-300 min-w-[44px]";
         }
       }
 
