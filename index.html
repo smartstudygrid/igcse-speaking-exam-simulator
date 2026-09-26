@@ -58,6 +58,49 @@
       background: #cbd5e1;
       border-radius: 4px;
     }
+    html.dark body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    html.dark .step-panel,
+    html.dark .bg-white {
+      background-color: #111827 !important;
+      color: #f3f4f6;
+      border-color: #1f2937 !important;
+    }
+    html.dark .bg-slate-50,
+    html.dark .bg-slate-100 {
+      background-color: #1e293b !important;
+      color: #e2e8f0;
+      border-color: #334155 !important;
+    }
+    html.dark .bg-slate-200,
+    html.dark .bg-slate-200\/95 {
+      background-color: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    html.dark .tab-btn {
+      color: #94a3b8;
+    }
+    html.dark .tab-btn.bg-white {
+      background-color: #1e293b !important;
+      color: #818cf8 !important;
+    }
+    html.dark input,
+    html.dark select,
+    html.dark textarea {
+      background-color: #1f2937 !important;
+      color: #f9fafb !important;
+      border-color: #374151 !important;
+    }
+    html.dark .text-slate-900,
+    html.dark .text-slate-800 {
+      color: #f3f4f6 !important;
+    }
+    html.dark .text-slate-700,
+    html.dark .text-slate-600 {
+      color: #cbd5e1 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 h-screen w-screen overflow-hidden flex flex-col antialiased select-none">
@@ -75,7 +118,6 @@
       <div>
         <div class="flex items-center gap-1.5 leading-none">
           <span class="font-bold text-sm tracking-tight">Cambridge IGCSE™ Speaking</span>
-          <span class="bg-indigo-950 text-indigo-300 text-[10px] px-2 py-0.5 rounded border border-indigo-700/60 font-mono font-semibold">0510 / 0511 • 0991 / 0993</span>
         </div>
         <div class="text-[11px] text-slate-400 font-medium flex items-center gap-2 mt-0.5">
           <span id="headerCandSummary" class="text-slate-300 font-semibold">Select or Enter Candidate</span>
@@ -119,16 +161,8 @@
       </div>
     </div>
 
-    <!-- Right Controls: Mic selector, Candidate Card, Mark Scheme, Admin -->
+    <!-- Right Controls: Candidate Card, Mark Scheme, Admin, Full Screen -->
     <div class="flex items-center gap-2">
-      <!-- Microphone Picker -->
-      <div class="hidden xl:flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-2 py-1 rounded-lg text-xs">
-        <i class="ph-bold ph-microphone-stage text-indigo-400"></i>
-        <select id="headerMicSelect" onchange="changeAudioInputDevice(this.value)" class="bg-transparent text-slate-300 text-[11px] focus:outline-none max-w-[130px] truncate cursor-pointer">
-          <option value="" class="bg-slate-900 text-slate-200">Default Microphone</option>
-        </select>
-      </div>
-
       <!-- Candidate Card Button -->
       <button onclick="openCandidateModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition shadow-sm">
         <i class="ph-bold ph-identification-card text-amber-400"></i>
@@ -145,6 +179,12 @@
       <button onclick="openAdminModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-slate-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
         <i class="ph-bold ph-lock-key text-amber-400"></i>
         <span class="hidden md:inline">Admin</span>
+      </button>
+
+      <!-- Full Screen Toggle Button -->
+      <button onclick="toggleFullScreen()" id="btnFullscreen" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition shadow-sm" title="Toggle Full Screen">
+        <i class="ph-bold ph-arrows-out text-sky-400" id="fullscreenIcon"></i>
+        <span class="hidden lg:inline" id="fullscreenText">Full Screen</span>
       </button>
     </div>
   </header>
@@ -1480,47 +1520,38 @@
 
       // Total Elapsed Timer (Timestamp-anchored)
       totalStartTime: null,
-      totalSeconds: 0,
-      totalTimerInterval: null,
       totalTimerStarted: false,
+      totalTimerInterval: null,
+      totalSeconds: 0,
 
-      // Section COUNTDOWN timers (Timestamp-anchored)
-      sectionDefaultDurations: { 0: 0, 1: 60, 2: 120, 3: 180, 4: 240, 5: 210, 6: 0 },
+      // Section Countdowns (Timestamp-anchored)
       sectionRemaining: { 0: 0, 1: 60, 2: 120, 3: 180, 4: 240, 5: 210, 6: 0 },
-      sectionEndTime: null,
-      sectionInterval: null,
+      sectionDefaultDurations: { 0: 0, 1: 60, 2: 120, 3: 180, 4: 240, 5: 210, 6: 0 },
       sectionLabels: {
-        0: 'Setup',
+        0: 'Setup:',
         1: 'Intro Left:',
         2: 'Warm-up Left:',
         3: 'Part 1 Left:',
         4: 'Part 2 Left:',
         5: 'Part 3 Left:',
-        6: 'Export Done'
+        6: 'Review:'
       },
+      sectionEndTime: null,
+      sectionInterval: null,
       timeUpTriggered: { 1: false, 2: false, 3: false, 4: false, 5: false },
 
-      // Candidate Card Embedded Timers (Timestamp-anchored)
+      // Candidate Card sub-timers
       cardPrepSeconds: 60,
+      cardPrepRunning: false,
       cardPrepEndTime: null,
       cardPrepInterval: null,
-      cardPrepRunning: false,
+
       cardTalkSeconds: 120,
+      cardTalkRunning: false,
       cardTalkEndTime: null,
       cardTalkInterval: null,
-      cardTalkRunning: false,
 
-      // Audio engine
-      isRecording: false,
-      audioStream: null,
-      mediaRecorder: null,
-      audioChunks: [],
-      audioContext: null,
-      analyser: null,
-      sourceNode: null,
-      vuAnimId: null,
-
-      // Marking Rubric (4 criteria /10, total /40)
+      // Scoring
       scores: {
         grammar: 7,
         vocabulary: 7,
@@ -1528,13 +1559,85 @@
         pronunciation: 7
       },
 
-      generatedMp3Blob: null,
-      generatedFilename: '',
-      generatedPdfFilename: '',
+      // Audio recording
+      audioStream: null,
+      mediaRecorder: null,
+      audioChunks: [],
+      isRecording: false,
+      audioContext: null,
+      analyser: null,
+      sourceNode: null,
+      vuAnimId: null,
 
+      // Generated files
+      generatedFilename: '0042_Sarah_Al_Mansoor.mp3',
+      generatedPdfFilename: '0042_Sarah_Al_Mansoor.pdf',
+      generatedMp3Blob: null,
+
+      // Candidate Roster
       roster: [],
-      googleWebAppUrl: PERMANENT_GOOGLE_WEB_APP_URL || localStorage.getItem('igcse_speaking_webapp_url') || ''
+      googleWebAppUrl: PERMANENT_GOOGLE_WEB_APP_URL
     };
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      try {
+        localStorage.setItem('igcse_theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
+      updateThemeUI(isDark);
+    }
+
+    function updateThemeUI(isDark) {
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (isDark) {
+        if (icon) icon.className = "ph-bold ph-sun text-amber-400";
+        if (text) text.textContent = "Light";
+      } else {
+        if (icon) icon.className = "ph-bold ph-moon text-indigo-400";
+        if (text) text.textContent = "Dark";
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen request error:", err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const icon = document.getElementById('fullscreenIcon');
+      const text = document.getElementById('fullscreenText');
+      if (document.fullscreenElement) {
+        if (icon) icon.className = "ph-bold ph-arrows-in text-sky-400";
+        if (text) text.textContent = "Exit Full";
+      } else {
+        if (icon) icon.className = "ph-bold ph-arrows-out text-sky-400";
+        if (text) text.textContent = "Full Screen";
+      }
+    });
+
+    // Automatically launch in full screen at start (with user gesture fallback)
+    function initAutoFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+      const trigger = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+        document.removeEventListener('click', trigger);
+        document.removeEventListener('keydown', trigger);
+      };
+      document.addEventListener('click', trigger, { once: true });
+      document.addEventListener('keydown', trigger, { once: true });
+    }
 
     // Helper functions
     function formatTime(sec) {
@@ -1626,13 +1729,13 @@
         const setupSelect = document.getElementById('setupMicSelect');
         const headerSelect = document.getElementById('headerMicSelect');
 
-        setupSelect.innerHTML = '';
-        headerSelect.innerHTML = '';
+        if (setupSelect) setupSelect.innerHTML = '';
+        if (headerSelect) headerSelect.innerHTML = '';
 
         if (audioInputs.length === 0) {
           const opt = new Option("Default System Microphone", "");
-          setupSelect.add(opt);
-          headerSelect.add(opt.cloneNode(true));
+          if (setupSelect) setupSelect.add(opt);
+          if (headerSelect) headerSelect.add(opt.cloneNode(true));
           return;
         }
 
@@ -1644,8 +1747,8 @@
             opt1.selected = true;
             opt2.selected = true;
           }
-          setupSelect.add(opt1);
-          headerSelect.add(opt2);
+          if (setupSelect) setupSelect.add(opt1);
+          if (headerSelect) headerSelect.add(opt2);
         });
       } catch (err) {
         console.warn("Could not enumerate audio devices:", err);
@@ -1654,8 +1757,10 @@
 
     async function changeAudioInputDevice(deviceId) {
       state.selectedAudioDeviceId = deviceId;
-      document.getElementById('setupMicSelect').value = deviceId;
-      document.getElementById('headerMicSelect').value = deviceId;
+      const setupSelect = document.getElementById('setupMicSelect');
+      const headerSelect = document.getElementById('headerMicSelect');
+      if (setupSelect) setupSelect.value = deviceId;
+      if (headerSelect) headerSelect.value = deviceId;
 
       if (state.audioStream) {
         state.audioStream.getTracks().forEach(t => t.stop());
@@ -3303,6 +3408,18 @@
       if (navigator.mediaDevices && navigator.mediaDevices.ondevicechange !== undefined) {
         navigator.mediaDevices.ondevicechange = populateMicrophoneList;
       }
+
+      // Initialize theme preference
+      const savedTheme = localStorage.getItem('igcse_theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        updateThemeUI(true);
+      } else {
+        updateThemeUI(false);
+      }
+
+      // Launch full screen on start
+      initAutoFullscreen();
     });
   </script>
 </body>
